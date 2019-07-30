@@ -4,5 +4,7 @@
 Modified main.go
 
 ## New File :
-schema/migrate.go
-schema/seed.go
+cmd/main.go
+packages/auth/controllers/users.go
+packages/auth/models/user.go
+service/database/database.go
