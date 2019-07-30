@@ -52,7 +52,7 @@ func main() {
 		return
 	}
 
-	service := Users{db: db}
+	service := Users{Db: db}
 
 	// =========================================================================
 	// Start API Service
@@ -117,7 +117,7 @@ type User struct {
 
 //Users : struct for set Users Dependency Injection
 type Users struct {
-	db *sql.DB
+	Db *sql.DB
 }
 
 //List : http handler for returning list of users
@@ -125,7 +125,7 @@ func (u *Users) List(w http.ResponseWriter, r *http.Request) {
 	list := []User{}
 	const q = `SELECT id, username, password, email, is_active FROM users`
 
-	rows, err := u.db.Query(q)
+	rows, err := u.Db.Query(q)
 	if err != nil {
 		log.Printf("error: query selecting users: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
