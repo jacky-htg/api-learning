@@ -7,10 +7,16 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jacky-htg/go-services/schema"
+	"github.com/jacky-htg/go-services/services/config"
 	"github.com/jacky-htg/go-services/services/database"
 )
 
 func main() {
+
+	_, ok := os.LookupEnv("APP_ENV")
+	if !ok {
+		config.Setup(".env")
+	}
 
 	flag.Parse()
 
