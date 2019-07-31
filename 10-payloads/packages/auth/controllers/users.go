@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/jacky-htg/go-services/packages/auth/controllers/payloads"
+	"github.com/jacky-htg/go-services/packages/auth/controllers/response"
 
 	"github.com/go-chi/chi"
 	"github.com/jacky-htg/go-services/packages/auth/models"
@@ -29,7 +29,13 @@ func (u *Users) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data, err := json.Marshal(list)
+	var userResponse response.UserResponse
+	var listResponse []*response.UserResponse
+	for _, user := range list {
+		listResponse = append(listResponse, userResponse.Transform(user))
+	}
+
+	data, err := json.Marshal(listResponse)
 	if err != nil {
 		u.Log.Println("error marshalling result", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -62,7 +68,7 @@ func (u *Users) View(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var response payloads.UserResponse
+	var response response.UserResponse
 	data, err := json.Marshal(response.Transform(user))
 	if err != nil {
 		u.Log.Println("error marshalling result", err)

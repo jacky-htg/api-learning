@@ -1,4 +1,4 @@
-package payloads
+package response
 
 import (
 	"github.com/jacky-htg/go-services/packages/auth/models"
