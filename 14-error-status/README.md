@@ -8,11 +8,11 @@ Tasks:
 - Modify the middleware function to detect this case and use the provided status code.
 
 ## File Changes :
-Modified services/api/errors.go
-Modified services/api/request.go
-Modified services/api/response.go
-Modified routing/route.go
-modified packages/auth/controllers/users.go
+- Modified services/api/errors.go
+- Modified services/api/request.go
+- Modified services/api/response.go
+- Modified routing/route.go
+- modified packages/auth/controllers/users.go
 
 ## New File :
 

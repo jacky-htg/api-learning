@@ -2,5 +2,5 @@
 
 ## File Changes :
 Modified main.go
--- add struct User
--- add ListUsers handler
+- add struct User
+- add ListUsers handler
