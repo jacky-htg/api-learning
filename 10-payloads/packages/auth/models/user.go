@@ -25,7 +25,8 @@ func (u *User) List(db *sql.DB) ([]User, error) {
 	}
 
 	for rows.Next() {
-		user, err := scanUser(rows)
+		var user User
+		err = scanUser(rows, &user)
 		if err != nil {
 			return list, err
 		}
@@ -41,34 +42,22 @@ func (u *User) List(db *sql.DB) ([]User, error) {
 }
 
 //Get : get user by id
-func (u *User) Get(db *sql.DB, id int64) (User, error) {
-	var user User
-
+func (u *User) Get(db *sql.DB, id int64) error {
 	rows, err := db.Query(qUsers+" WHERE id=?", id)
 	if err != nil {
-		return user, err
+		return err
 	}
 
 	for rows.Next() {
-		user, err = scanUser(rows)
+		err = scanUser(rows, u)
 		if err != nil {
-			return user, err
+			return err
 		}
 	}
 
-	if err := rows.Err(); err != nil {
-		return user, err
-	}
-
-	return user, nil
+	return rows.Err()
 }
 
-func scanUser(rows *sql.Rows) (User, error) {
-
-	var user User
-	if err := rows.Scan(&user.ID, &user.Username, &user.Password, &user.Email, &user.IsActive); err != nil {
-		return user, err
-	}
-
-	return user, nil
+func scanUser(rows *sql.Rows, user *User) error {
+	return rows.Scan(&user.ID, &user.Username, &user.Password, &user.Email, &user.IsActive)
 }
