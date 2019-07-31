@@ -58,7 +58,7 @@ func (u *Users) View(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var user models.User
-	user, err = user.Get(u.Db, int64(id))
+	err = user.Get(u.Db, int64(id))
 	if err != nil {
 		u.Log.Printf("error call list user: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -102,8 +102,7 @@ func (u *Users) Create(w http.ResponseWriter, r *http.Request) {
 	userRequest.Password = string(pass)
 
 	user := userRequest.Transform()
-
-	user, err = user.Create(u.Db)
+	err = user.Create(u.Db)
 	if err != nil {
 		u.Log.Printf("error call create user: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -132,7 +131,7 @@ func (u *Users) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var user models.User
-	user, err = user.Get(u.Db, int64(id))
+	err = user.Get(u.Db, int64(id))
 	if err != nil {
 		u.Log.Printf("error call list user: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -176,8 +175,7 @@ func (u *Users) Update(w http.ResponseWriter, r *http.Request) {
 		userRequest.ID = user.ID
 	}
 	userUpdate := userRequest.Transform(&user)
-
-	userUpdate, err = userUpdate.Update(u.Db)
+	err = userUpdate.Update(u.Db)
 	if err != nil {
 		u.Log.Printf("error call update user: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -206,7 +204,7 @@ func (u *Users) Delete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var user models.User
-	user, err = user.Get(u.Db, int64(id))
+	err = user.Get(u.Db, int64(id))
 	if err != nil {
 		u.Log.Printf("error call list user: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)

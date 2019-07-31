@@ -25,7 +25,8 @@ func (u *User) List(db *sql.DB) ([]User, error) {
 	}
 
 	for rows.Next() {
-		user, err := scanUser(rows)
+		var user User
+		err = scanUser(rows, &user)
 		if err != nil {
 			return list, err
 		}
@@ -41,53 +42,50 @@ func (u *User) List(db *sql.DB) ([]User, error) {
 }
 
 //Get : get user by id
-func (u *User) Get(db *sql.DB, id int64) (User, error) {
-	var user User
-
+func (u *User) Get(db *sql.DB, id int64) error {
 	rows, err := db.Query(qUsers+" WHERE id=?", id)
 	if err != nil {
-		return user, err
+		return err
 	}
 
 	for rows.Next() {
-		user, err = scanUser(rows)
+		err = scanUser(rows, u)
 		if err != nil {
-			return user, err
+			return err
 		}
 	}
 
-	if err := rows.Err(); err != nil {
-		return user, err
-	}
-
-	return user, nil
+	return rows.Err()
 }
 
 //Create new user
-func (u *User) Create(db *sql.DB) (*User, error) {
+func (u *User) Create(db *sql.DB) error {
 	const query = `
 		INSERT INTO users (username, password, email, is_active, created, updated)
 		VALUES (?, ?, ?, ?, NOW(), NOW())
 	`
 	stmt, err := db.Prepare(query)
 	if err != nil {
-		return u, err
+		return err
 	}
 
 	res, err := stmt.Exec(u.Username, u.Password, u.Email, u.IsActive)
 	if err != nil {
-		return u, err
+		return err
 	}
 
 	id, err := res.LastInsertId()
+	if err != nil {
+		return err
+	}
 
 	u.ID = uint64(id)
 
-	return u, nil
+	return nil
 }
 
 //Update : update user
-func (u *User) Update(db *sql.DB) (*User, error) {
+func (u *User) Update(db *sql.DB) error {
 
 	stmt, err := db.Prepare(`
 		UPDATE users 
@@ -98,11 +96,7 @@ func (u *User) Update(db *sql.DB) (*User, error) {
 		WHERE id = ?
 	`)
 	_, err = stmt.Exec(u.Username, u.Password, u.IsActive, u.ID)
-	if err != nil {
-		return u, err
-	}
-
-	return u, nil
+	return err
 }
 
 //Delete : delete user
@@ -116,12 +110,6 @@ func (u *User) Delete(db *sql.DB) (bool, error) {
 	return true, nil
 }
 
-func scanUser(rows *sql.Rows) (User, error) {
-
-	var user User
-	if err := rows.Scan(&user.ID, &user.Username, &user.Password, &user.Email, &user.IsActive); err != nil {
-		return user, err
-	}
-
-	return user, nil
+func scanUser(rows *sql.Rows, user *User) error {
+	return rows.Scan(&user.ID, &user.Username, &user.Password, &user.Email, &user.IsActive)
 }
