@@ -31,10 +31,11 @@ func (u *Users) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var userResponse response.UserResponse
 	var listResponse []*response.UserResponse
 	for _, user := range list {
-		listResponse = append(listResponse, userResponse.Transform(&user))
+		var userResponse response.UserResponse
+		userResponse.Transform(&user)
+		listResponse = append(listResponse, &userResponse)
 	}
 
 	data, err := json.Marshal(listResponse)
@@ -71,7 +72,8 @@ func (u *Users) View(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var response response.UserResponse
-	data, err := json.Marshal(response.Transform(&user))
+	response.Transform(&user)
+	data, err := json.Marshal(response)
 	if err != nil {
 		u.Log.Println("error marshalling result", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -123,7 +125,8 @@ func (u *Users) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var response response.UserResponse
-	data, err := json.Marshal(response.Transform(user))
+	response.Transform(user)
+	data, err := json.Marshal(response)
 	if err != nil {
 		u.Log.Println("error marshalling result", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -204,7 +207,8 @@ func (u *Users) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var response response.UserResponse
-	data, err := json.Marshal(response.Transform(userUpdate))
+	response.Transform(userUpdate)
+	data, err := json.Marshal(response)
 	if err != nil {
 		u.Log.Println("error marshalling result", err)
 		w.WriteHeader(http.StatusInternalServerError)
