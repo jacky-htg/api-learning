@@ -49,7 +49,7 @@ func (u *Users) View(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	var user models.User
-	user, err = user.Get(u.Db, int64(id))
+	err = user.Get(u.Db, int64(id))
 	if err != nil {
 		return errors.Wrap(err, "Get User")
 	}
@@ -78,7 +78,7 @@ func (u *Users) Create(w http.ResponseWriter, r *http.Request) error {
 
 	userRequest.Password = string(pass)
 	user := userRequest.Transform()
-	user, err = user.Create(u.Db)
+	err = user.Create(u.Db)
 	if err != nil {
 		return errors.Wrap(err, "Create User")
 	}
@@ -98,7 +98,7 @@ func (u *Users) Update(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	var user models.User
-	user, err = user.Get(u.Db, int64(id))
+	err = user.Get(u.Db, int64(id))
 	if err != nil {
 		return errors.Wrap(err, "Get User")
 	}
@@ -130,7 +130,7 @@ func (u *Users) Update(w http.ResponseWriter, r *http.Request) error {
 		userRequest.ID = user.ID
 	}
 	userUpdate := userRequest.Transform(&user)
-	userUpdate, err = userUpdate.Update(u.Db)
+	err = userUpdate.Update(u.Db)
 	if err != nil {
 		return errors.Wrap(err, "Update user")
 	}
@@ -150,7 +150,7 @@ func (u *Users) Delete(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	var user models.User
-	user, err = user.Get(u.Db, int64(id))
+	err = user.Get(u.Db, int64(id))
 	if err != nil {
 		return errors.Wrap(err, "Get user")
 	}
