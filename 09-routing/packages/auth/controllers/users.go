@@ -53,7 +53,7 @@ func (u *Users) View(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var user models.User
-	user, err = user.Get(u.Db, int64(id))
+	err = user.Get(u.Db, int64(id))
 	if err != nil {
 		u.Log.Printf("error call list user: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
