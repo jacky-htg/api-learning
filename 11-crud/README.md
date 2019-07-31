@@ -1,12 +1,14 @@
 # Rebel Services
 
-Add payloads for response and request
+Add crud for users
 
 ## File Changes :
 Modified packages/auth/controllers/users.go
 Modified packages/auth/models/user.go
+Modified packages/auth/controllers/response/users.go
+
 
 ## New File :
-packages/auth/controllers/payloads/users.go
+packages/auth/controllers/request/users.go
 
 ## Adding Dependency :
