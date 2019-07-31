@@ -12,10 +12,8 @@ type UserResponse struct {
 }
 
 //Transform from User model to User response
-func (u *UserResponse) Transform(user models.User) *UserResponse {
+func (u *UserResponse) Transform(user models.User) {
 	u.ID = user.ID
 	u.Username = user.Username
 	u.IsActive = user.IsActive
-
-	return u
 }
