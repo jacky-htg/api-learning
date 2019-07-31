@@ -8,3 +8,7 @@ Modified main.go
 Modified cmd/main.go
 
 ## New File :
+
+
+## Adding Dependency :
+- github.com/pkg/errors
