@@ -1,19 +1,19 @@
 package controllers
 
 import (
-	"database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/go-chi/chi"
-	"github.com/jacky-htg/go-services/packages/auth/models"
+	"github.com/jacky-htg/go-services/models"
+	"github.com/jmoiron/sqlx"
 )
 
 //Users : struct for set Users Dependency Injection
 type Users struct {
-	Db  *sql.DB
+	Db  *sqlx.DB
 	Log *log.Logger
 }
 
@@ -53,7 +53,8 @@ func (u *Users) View(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var user models.User
-	err = user.Get(u.Db, int64(id))
+	user.ID = uint64(id)
+	err = user.Get(u.Db)
 	if err != nil {
 		u.Log.Printf("error call list user: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
