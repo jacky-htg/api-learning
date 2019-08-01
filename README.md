@@ -1,5 +1,14 @@
 # Rebel Services
 From zero to novice. Step by step create golang framework.
+
+## Main Architecture and Repository
+- Routing : github.com/go-chi/chi
+- Database : github.com/go-sql-driver/mysql
+- Sql : github.com/jmoiron/sqlx
+- Migration : github.com/GuiaBolso/darwin
+- Architecture : simple MVC  
+
+## Module
 - 01-startup
 - 02-shutdown
 - 03-json
