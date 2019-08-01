@@ -14,6 +14,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jacky-htg/go-services/schema"
+	"github.com/jmoiron/sqlx"
 )
 
 func main() {
@@ -26,16 +27,21 @@ func main() {
 	// =========================================================================
 	// Start Database
 
-	db, err := openDB()
+	dbx, err := openDBx()
 	if err != nil {
 		log.Fatalf("error: connecting to db: %s", err)
 	}
-	defer db.Close()
+	defer dbx.Close()
 
 	flag.Parse()
 
 	switch flag.Arg(0) {
 	case "migrate":
+		db, err := openDB()
+		if err != nil {
+			log.Fatalf("error: connecting to db: %s", err)
+		}
+		defer dbx.Close()
 		if err := schema.Migrate(db); err != nil {
 			log.Println("error applying migrations", err)
 			os.Exit(1)
@@ -44,7 +50,7 @@ func main() {
 		return
 
 	case "seed":
-		if err := schema.Seed(db); err != nil {
+		if err := schema.Seed(dbx); err != nil {
 			log.Println("error seeding database", err)
 			os.Exit(1)
 		}
@@ -52,7 +58,7 @@ func main() {
 		return
 	}
 
-	service := Users{Db: db}
+	service := Users{Db: dbx}
 
 	// =========================================================================
 	// Start API Service
@@ -102,22 +108,26 @@ func main() {
 	log.Println("done")
 }
 
+func openDBx() (*sqlx.DB, error) {
+	return sqlx.Open("mysql", "root:@tcp(localhost:3306)/go-services?parseTime=true")
+}
+
 func openDB() (*sql.DB, error) {
 	return sql.Open("mysql", "root:@tcp(localhost:3306)/go-services?parseTime=true")
 }
 
 //User : struct of User
 type User struct {
-	ID       uint
-	Username string
-	Password string
-	Email    string
-	IsActive bool
+	ID       uint   `db:"id"`
+	Username string `db:"username"`
+	Password string `db:"password"`
+	Email    string `db:"email"`
+	IsActive bool   `db:"is_active"`
 }
 
 //Users : struct for set Users Dependency Injection
 type Users struct {
-	Db *sql.DB
+	Db *sqlx.DB
 }
 
 //List : http handler for returning list of users
@@ -125,25 +135,9 @@ func (u *Users) List(w http.ResponseWriter, r *http.Request) {
 	list := []User{}
 	const q = `SELECT id, username, password, email, is_active FROM users`
 
-	rows, err := u.Db.Query(q)
+	err := u.Db.Select(&list, q)
 	if err != nil {
 		log.Printf("error: query selecting users: %s", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	for rows.Next() {
-		var user User
-		if err := rows.Scan(&user.ID, &user.Username, &user.Password, &user.Email, &user.IsActive); err != nil {
-			log.Printf("error: scan users: %s", err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		list = append(list, user)
-	}
-
-	if err := rows.Err(); err != nil {
-		log.Printf("error: Row quer users: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
