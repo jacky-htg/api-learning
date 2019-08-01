@@ -2,6 +2,9 @@ package models
 
 import (
 	"database/sql"
+	"net/http"
+
+	"github.com/jacky-htg/go-services/services/api"
 )
 
 //User : struct of User
@@ -26,7 +29,7 @@ func (u *User) List(db *sql.DB) ([]User, error) {
 
 	for rows.Next() {
 		var user User
-		err = scanUser(rows, &user)
+		err = rows.Scan(getArgs(&user)...)
 		if err != nil {
 			return list, err
 		}
@@ -38,24 +41,20 @@ func (u *User) List(db *sql.DB) ([]User, error) {
 		return list, err
 	}
 
+	if len(list) <= 0 {
+		return list, api.NewRequestError(sql.ErrNoRows, http.StatusNotFound)
+	}
+
 	return list, nil
 }
 
 //Get : get user by id
 func (u *User) Get(db *sql.DB, id int64) error {
-	rows, err := db.Query(qUsers+" WHERE id=?", id)
-	if err != nil {
-		return err
+	err := db.QueryRow(qUsers+" WHERE id=?", id).Scan(getArgs(u)...)
+	if err == sql.ErrNoRows {
+		return api.NewRequestError(err, http.StatusNotFound)
 	}
-
-	for rows.Next() {
-		err = scanUser(rows, u)
-		if err != nil {
-			return err
-		}
-	}
-
-	return rows.Err()
+	return err
 }
 
 //Create new user
@@ -110,6 +109,12 @@ func (u *User) Delete(db *sql.DB) (bool, error) {
 	return true, nil
 }
 
-func scanUser(rows *sql.Rows, user *User) error {
-	return rows.Scan(&user.ID, &user.Username, &user.Password, &user.Email, &user.IsActive)
+func getArgs(user *User) []interface{} {
+	var args []interface{}
+	args = append(args, &user.ID)
+	args = append(args, &user.Username)
+	args = append(args, &user.Password)
+	args = append(args, &user.Email)
+	args = append(args, &user.IsActive)
+	return args
 }

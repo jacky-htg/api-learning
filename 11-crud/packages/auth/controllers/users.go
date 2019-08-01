@@ -159,13 +159,6 @@ func (u *Users) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if user.ID <= 0 {
-		err = errors.New("User not found")
-		u.Log.Printf("error user not found: %s", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
 	var userRequest request.UserRequest
 
 	decoder := json.NewDecoder(r.Body)
@@ -237,13 +230,6 @@ func (u *Users) Delete(w http.ResponseWriter, r *http.Request) {
 	err = user.Get(u.Db, int64(id))
 	if err != nil {
 		u.Log.Printf("error call list user: %s", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	if user.ID <= 0 {
-		err = errors.New("User not found")
-		u.Log.Printf("error user not found: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

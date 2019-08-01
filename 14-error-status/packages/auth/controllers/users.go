@@ -54,10 +54,6 @@ func (u *Users) View(w http.ResponseWriter, r *http.Request) error {
 		return errors.Wrap(err, "Get User")
 	}
 
-	if user.ID < 1 {
-		return api.NewRequestError(errors.New("User not found"), http.StatusNotFound)
-	}
-
 	var response response.UserResponse
 	response.Transform(&user)
 	return api.Response(w, response, http.StatusOK)
@@ -107,10 +103,6 @@ func (u *Users) Update(w http.ResponseWriter, r *http.Request) error {
 		return errors.Wrap(err, "Get User")
 	}
 
-	if user.ID <= 0 {
-		return api.NewRequestError(errors.New("User not found"), http.StatusNotFound)
-	}
-
 	var userRequest request.UserRequest
 	err = api.Decode(r, &userRequest)
 	if err != nil {
@@ -157,10 +149,6 @@ func (u *Users) Delete(w http.ResponseWriter, r *http.Request) error {
 	err = user.Get(u.Db, int64(id))
 	if err != nil {
 		return errors.Wrap(err, "Get user")
-	}
-
-	if user.ID <= 0 {
-		return api.NewRequestError(errors.New("User not found"), http.StatusNotFound)
 	}
 
 	isDelete, err := user.Delete(u.Db)
