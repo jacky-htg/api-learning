@@ -13,7 +13,7 @@ From zero to novice. Step by step create golang framework.
 - 02-shutdown
 - 03-json
 - 04-database
-- 05-hmvc
+- 05-mvc
 - 06-configuration
 - 07-fatal
 - 08-logging
