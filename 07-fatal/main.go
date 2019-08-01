@@ -38,7 +38,7 @@ func run() error {
 	// =========================================================================
 	// Start Database
 
-	db, err := database.Open()
+	db, err := database.Openx()
 	if err != nil {
 		return errors.Wrap(err, "connecting to db")
 	}
