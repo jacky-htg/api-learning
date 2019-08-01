@@ -10,7 +10,7 @@ import (
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/jacky-htg/go-services/packages/auth/controllers"
+	"github.com/jacky-htg/go-services/controllers"
 	"github.com/jacky-htg/go-services/services/config"
 	"github.com/jacky-htg/go-services/services/database"
 	"github.com/pkg/errors"
@@ -43,7 +43,7 @@ func run() error {
 	// =========================================================================
 	// Start Database
 
-	db, err := database.Open()
+	db, err := database.Openx()
 	if err != nil {
 		return errors.Wrap(err, "connecting to db")
 	}
