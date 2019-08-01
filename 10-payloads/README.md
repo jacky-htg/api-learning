@@ -3,10 +3,9 @@
 Add payloads for response and request
 
 ## File Changes :
-- Modified packages/auth/controllers/users.go
-- Modified packages/auth/models/user.go
+- Modified controllers/users.go
 
 ## New File :
-- packages/auth/controllers/response/users.go
+- controllers/response/user_response.go
 
 ## Adding Dependency :

@@ -1,7 +1,7 @@
 package response
 
 import (
-	"github.com/jacky-htg/go-services/packages/auth/models"
+	"github.com/jacky-htg/go-services/models"
 )
 
 //UserResponse : format json response for user

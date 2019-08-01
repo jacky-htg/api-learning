@@ -1,16 +1,16 @@
 package routing
 
 import (
-	"database/sql"
 	"log"
 	"net/http"
 
 	"github.com/go-chi/chi"
-	"github.com/jacky-htg/go-services/packages/auth/controllers"
+	"github.com/jacky-htg/go-services/controllers"
+	"github.com/jmoiron/sqlx"
 )
 
 //API : hanlder api
-func API(db *sql.DB, log *log.Logger) http.Handler {
+func API(db *sqlx.DB, log *log.Logger) http.Handler {
 	app := newApp(log)
 	u := controllers.Users{Db: db, Log: log}
 
