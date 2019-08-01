@@ -1,6 +1,6 @@
 package schema
 
-import "database/sql"
+import "github.com/jmoiron/sqlx"
 
 // seeds is a string constant containing all of the queries needed to get the
 // db seeded to a useful state for development.
@@ -22,7 +22,7 @@ INSERT INTO users (username, password, email, is_active) VALUES
 
 // Seed runs the set of seed-data queries against db. The queries are ran in a
 // transaction and rolled back if any fail.
-func Seed(db *sql.DB) error {
+func Seed(db *sqlx.DB) error {
 	tx, err := db.Begin()
 	if err != nil {
 		return err

@@ -1,58 +1,34 @@
 package models
 
 import (
-	"database/sql"
-	"errors"
+	"github.com/jmoiron/sqlx"
 )
 
 //User : struct of User
 type User struct {
-	ID       uint64
-	Username string
-	Password string
-	Email    string
-	IsActive bool
+	ID       uint64 `db:"id"`
+	Username string `db:"username"`
+	Password string `db:"password"`
+	Email    string `db:"email"`
+	IsActive bool   `db:"is_active"`
 }
 
 const qUsers = `SELECT id, username, password, email, is_active FROM users`
 
 //List : List of users
-func (u *User) List(db *sql.DB) ([]User, error) {
+func (u *User) List(db *sqlx.DB) ([]User, error) {
 	list := []User{}
-
-	rows, err := db.Query(qUsers)
-	if err != nil {
-		return list, err
-	}
-
-	for rows.Next() {
-		var user User
-		err = rows.Scan(getArgs(&user)...)
-		if err != nil {
-			return list, err
-		}
-
-		list = append(list, user)
-	}
-
-	if err := rows.Err(); err != nil {
-		return list, err
-	}
-
-	if len(list) <= 0 {
-		return list, errors.New("Users not found")
-	}
-
-	return list, nil
+	err := db.Select(&list, qUsers)
+	return list, err
 }
 
 //Get : get user by id
-func (u *User) Get(db *sql.DB, id int64) error {
-	return db.QueryRow(qUsers+" WHERE id=?", id).Scan(getArgs(u)...)
+func (u *User) Get(db *sqlx.DB) error {
+	return db.Get(u, qUsers+" WHERE id=?", u.ID)
 }
 
 //Create new user
-func (u *User) Create(db *sql.DB) error {
+func (u *User) Create(db *sqlx.DB) error {
 	const query = `
 		INSERT INTO users (username, password, email, is_active, created, updated)
 		VALUES (?, ?, ?, ?, NOW(), NOW())
@@ -78,7 +54,7 @@ func (u *User) Create(db *sql.DB) error {
 }
 
 //Update : update user
-func (u *User) Update(db *sql.DB) error {
+func (u *User) Update(db *sqlx.DB) error {
 
 	stmt, err := db.Prepare(`
 		UPDATE users 
@@ -93,7 +69,7 @@ func (u *User) Update(db *sql.DB) error {
 }
 
 //Delete : delete user
-func (u *User) Delete(db *sql.DB) (bool, error) {
+func (u *User) Delete(db *sqlx.DB) (bool, error) {
 	stmt, err := db.Prepare(`DELETE FROM users WHERE id = ?`)
 	_, err = stmt.Exec(u.ID)
 	if err != nil {

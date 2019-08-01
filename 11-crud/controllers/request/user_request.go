@@ -1,7 +1,7 @@
 package request
 
 import (
-	"github.com/jacky-htg/go-services/packages/auth/models"
+	"github.com/jacky-htg/go-services/models"
 )
 
 //NewUserRequest : format json request for new user
