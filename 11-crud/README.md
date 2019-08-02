@@ -6,6 +6,7 @@ Add crud for users
 - Modified controllers/users.go
 - Modified models/user.go
 - Modified payloads/response/user_response.go
+- Modified routing/route.go
 
 
 ## New File :
