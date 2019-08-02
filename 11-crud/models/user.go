@@ -78,13 +78,3 @@ func (u *User) Delete(db *sqlx.DB) (bool, error) {
 
 	return true, nil
 }
-
-func getArgs(user *User) []interface{} {
-	var args []interface{}
-	args = append(args, &user.ID)
-	args = append(args, &user.Username)
-	args = append(args, &user.Password)
-	args = append(args, &user.Email)
-	args = append(args, &user.IsActive)
-	return args
-}
