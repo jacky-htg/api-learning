@@ -10,8 +10,8 @@
 
 ## File Changes :
 - Modified main.go
-- Modified packages/auth/controllers/users.go
-- Modified packages/auth/models/user.go
+- Modified controllers/users.go
+- Modified models/user.go
 
 ## New File :
 - routing/route.go

@@ -6,6 +6,6 @@ Add payloads for response and request
 - Modified controllers/users.go
 
 ## New File :
-- controllers/response/user_response.go
+- payloads/response/user_response.go
 
 ## Adding Dependency :

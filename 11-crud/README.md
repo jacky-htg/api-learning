@@ -3,12 +3,12 @@
 Add crud for users
 
 ## File Changes :
-- Modified packages/auth/controllers/users.go
-- Modified packages/auth/models/user.go
-- Modified packages/auth/controllers/response/users.go
+- Modified controllers/users.go
+- Modified models/user.go
+- Modified payloads/response/user_response.go
 
 
 ## New File :
-- packages/auth/controllers/request/users.go
+- payloads/request/user_request.go
 
 ## Adding Dependency :

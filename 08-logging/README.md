@@ -5,7 +5,7 @@
 
 ## File Changes :
 - Modified main.go
-- Modified packages/auth/controllers/users.go
+- Modified controllers/users.go
 
 ## New File :
 

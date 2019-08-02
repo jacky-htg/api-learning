@@ -12,7 +12,7 @@ Tasks:
 - Modified services/api/request.go
 - Modified services/api/response.go
 - Modified routing/route.go
-- modified packages/auth/controllers/users.go
+- modified controllers/users.go
 
 ## New File :
 

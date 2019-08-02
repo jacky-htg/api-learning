@@ -8,7 +8,7 @@ Tasks:
 
 
 ## File Changes :
-- Modified packages/auth/controllers/users.go
+- Modified controllers/users.go
 - Modified routing/route.go
 
 ## New File :
