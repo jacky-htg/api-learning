@@ -1,23 +1,23 @@
 package controllers
 
 import (
-	"database/sql"
 	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/go-chi/chi"
-	"github.com/jacky-htg/go-services/packages/auth/controllers/request"
-	"github.com/jacky-htg/go-services/packages/auth/controllers/response"
-	"github.com/jacky-htg/go-services/packages/auth/models"
+	"github.com/jacky-htg/go-services/models"
+	"github.com/jacky-htg/go-services/payloads/request"
+	"github.com/jacky-htg/go-services/payloads/response"
 	"github.com/jacky-htg/go-services/services/api"
+	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
 )
 
 //Users : struct for set Users Dependency Injection
 type Users struct {
-	Db  *sql.DB
+	Db  *sqlx.DB
 	Log *log.Logger
 }
 
@@ -49,7 +49,8 @@ func (u *Users) View(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	var user models.User
-	err = user.Get(u.Db, int64(id))
+	user.ID = uint64(id)
+	err = user.Get(u.Db)
 	if err != nil {
 		return errors.Wrap(err, "Get User")
 	}
@@ -98,7 +99,8 @@ func (u *Users) Update(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	var user models.User
-	err = user.Get(u.Db, int64(id))
+	user.ID = uint64(id)
+	err = user.Get(u.Db)
 	if err != nil {
 		return errors.Wrap(err, "Get User")
 	}
@@ -146,7 +148,8 @@ func (u *Users) Delete(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	var user models.User
-	err = user.Get(u.Db, int64(id))
+	user.ID = uint64(id)
+	err = user.Get(u.Db)
 	if err != nil {
 		return errors.Wrap(err, "Get user")
 	}
