@@ -8,9 +8,9 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi"
-	"github.com/jacky-htg/go-services/controllers/request"
-	"github.com/jacky-htg/go-services/controllers/response"
 	"github.com/jacky-htg/go-services/models"
+	"github.com/jacky-htg/go-services/payloads/request"
+	"github.com/jacky-htg/go-services/payloads/response"
 	"github.com/jmoiron/sqlx"
 	"golang.org/x/crypto/bcrypt"
 )

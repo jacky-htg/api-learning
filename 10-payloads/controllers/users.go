@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/jacky-htg/go-services/controllers/response"
+	"github.com/jacky-htg/go-services/payloads/response"
 	"github.com/jmoiron/sqlx"
 
 	"github.com/go-chi/chi"
