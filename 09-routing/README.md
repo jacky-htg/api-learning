@@ -6,7 +6,7 @@
 
 ## Url
 - http://localhost:9000/users
-- http://localhost:8000/users/1
+- http://localhost:9000/users/1
 
 ## File Changes :
 - Modified main.go
