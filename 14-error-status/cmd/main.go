@@ -32,21 +32,26 @@ func run() error {
 	// =========================================================================
 	// Start Database
 
-	db, err := database.Open()
+	dbx, err := database.Openx()
 	if err != nil {
 		return errors.Wrap(err, "connecting to db")
 	}
-	defer db.Close()
+	defer dbx.Close()
 
 	switch flag.Arg(0) {
 	case "migrate":
+		db, err := database.Open()
+		if err != nil {
+			return errors.Wrap(err, "connecting to db")
+		}
+		defer db.Close()
 		if err := schema.Migrate(db); err != nil {
 			return errors.Wrap(err, "applying migrations")
 		}
 		fmt.Println("Migrations complete")
 
 	case "seed":
-		if err := schema.Seed(db); err != nil {
+		if err := schema.Seed(dbx); err != nil {
 			return errors.Wrap(err, "seeding database")
 		}
 		fmt.Println("Seed data complete")
