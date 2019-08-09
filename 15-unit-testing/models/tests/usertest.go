@@ -39,6 +39,8 @@ func (u *User) Create(t *testing.T) {
 	if diff := cmp.Diff(u1, u0); diff != "" {
 		t.Fatalf("fetched != created:\n%s", diff)
 	}
+
+	u1.Delete(u.Db)
 }
 
 //List : unit test for user list function
