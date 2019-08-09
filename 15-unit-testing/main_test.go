@@ -27,5 +27,5 @@ func TestMain(t *testing.T) {
 	// unit test for user
 	user := userUnitTest.User{Db: db}
 	t.Run("UsersList", user.List)
-	t.Run("UsersCreate", user.Create)
+	t.Run("UsersCreate", user.Crud)
 }

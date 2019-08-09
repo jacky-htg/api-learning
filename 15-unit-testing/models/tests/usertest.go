@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"database/sql"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -8,13 +9,13 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-// Users struct for test users
+// User struct for test users
 type User struct {
 	Db *sqlx.DB
 }
 
-//Create : unit test  for create user function
-func (u *User) Create(t *testing.T) {
+//Crud : unit test  for create get and delete user function
+func (u *User) Crud(t *testing.T) {
 	u0 := models.User{
 		Username: "Aladin",
 		Email:    "aladin@gmail.com",
@@ -40,7 +41,42 @@ func (u *User) Create(t *testing.T) {
 		t.Fatalf("fetched != created:\n%s", diff)
 	}
 
-	u1.Delete(u.Db)
+	u1.IsActive = false
+	err = u1.Update(u.Db)
+	if err != nil {
+		t.Fatalf("update user u1: %s", err)
+	}
+
+	u2 := models.User{
+		ID: u1.ID,
+	}
+
+	err = u2.Get(u.Db)
+	if err != nil {
+		t.Fatalf("getting user u2: %s", err)
+	}
+
+	if diff := cmp.Diff(u1, u2); diff != "" {
+		t.Fatalf("fetched != updated:\n%s", diff)
+	}
+
+	isDelete, err := u2.Delete(u.Db)
+	if err != nil {
+		t.Fatalf("delete user u2: %s", err)
+	}
+
+	if !isDelete {
+		t.Fatal("delete user u2")
+	}
+
+	u3 := models.User{
+		ID: u2.ID,
+	}
+
+	err = u3.Get(u.Db)
+	if err != sql.ErrNoRows {
+		t.Fatalf("getting user u3: %s", err)
+	}
 }
 
 //List : unit test for user list function
