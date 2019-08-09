@@ -45,7 +45,7 @@ func NewUnit(t *testing.T) (*sqlx.DB, func()) {
 		if pingError == nil {
 			break
 		}
-		time.Sleep(time.Duration(attempts) * 100 * time.Millisecond)
+		time.Sleep(time.Duration(attempts) * 1000 * time.Millisecond)
 	}
 
 	if pingError != nil {

@@ -1,25 +1,20 @@
-package models_test
+package tests
 
 import (
 	"testing"
 
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/google/go-cmp/cmp"
 	"github.com/jacky-htg/go-services/models"
-	"github.com/jacky-htg/go-services/schema"
-	"github.com/jacky-htg/go-services/services/config"
-	"github.com/jacky-htg/go-services/tests"
+	"github.com/jmoiron/sqlx"
 )
 
-func init() {
-	config.Setup("../../.env")
-
+// Users struct for test users
+type User struct {
+	Db *sqlx.DB
 }
 
-func TestUsers(t *testing.T) {
-	db, teardown := tests.NewUnit(t)
-	defer teardown()
-
+//Create : unit test  for create user function
+func (u *User) Create(t *testing.T) {
 	u0 := models.User{
 		Username: "Aladin",
 		Email:    "aladin@gmail.com",
@@ -27,7 +22,7 @@ func TestUsers(t *testing.T) {
 		IsActive: true,
 	}
 
-	err := u0.Create(db)
+	err := u0.Create(u.Db)
 	if err != nil {
 		t.Fatalf("creating user u0: %s", err)
 	}
@@ -36,7 +31,7 @@ func TestUsers(t *testing.T) {
 		ID: u0.ID,
 	}
 
-	err = u1.Get(db)
+	err = u1.Get(u.Db)
 	if err != nil {
 		t.Fatalf("getting user u1: %s", err)
 	}
@@ -46,16 +41,10 @@ func TestUsers(t *testing.T) {
 	}
 }
 
-func TestUserList(t *testing.T) {
-	db, teardown := tests.NewUnit(t)
-	defer teardown()
-
-	if err := schema.Seed(db); err != nil {
-		t.Fatal(err)
-	}
-
+//List : unit test for user list function
+func (u *User) List(t *testing.T) {
 	var user models.User
-	users, err := user.List(db)
+	users, err := user.List(u.Db)
 	if err != nil {
 		t.Fatalf("listing users: %s", err)
 	}
