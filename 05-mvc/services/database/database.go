@@ -8,10 +8,10 @@ import (
 
 //Open : open database
 func Open() (*sql.DB, error) {
-	return sql.Open("mysql", "root:@tcp(localhost:3306)/go-services?parseTime=true")
+	return sql.Open("mysql", "root:pass@tcp(localhost:3306)/go-services?parseTime=true")
 }
 
 //Openx : open database
 func Openx() (*sqlx.DB, error) {
-	return sqlx.Open("mysql", "root:@tcp(localhost:3306)/go-services?parseTime=true")
+	return sqlx.Open("mysql", "root:pass@tcp(localhost:3306)/go-services?parseTime=true")
 }

@@ -109,11 +109,11 @@ func main() {
 }
 
 func openDBx() (*sqlx.DB, error) {
-	return sqlx.Open("mysql", "root:@tcp(localhost:3306)/go-services?parseTime=true")
+	return sqlx.Open("mysql", "root:pass@tcp(localhost:3306)/go-services?parseTime=true")
 }
 
 func openDB() (*sql.DB, error) {
-	return sql.Open("mysql", "root:@tcp(localhost:3306)/go-services?parseTime=true")
+	return sql.Open("mysql", "root:pass@tcp(localhost:3306)/go-services?parseTime=true")
 }
 
 //User : struct of User
