@@ -3,6 +3,7 @@
 Create token auth using jwt token  
 
 Tasks:
+- add TOKEN_SALT environtment
 - create token library on libraries/token/token.go
 - add login routing on routing/route.go
 - create auth controllers on controllers/auths.go
@@ -11,6 +12,7 @@ Tasks:
 - create payload token response on payloads/response/token_response.go 
 
 ## File Changes :
+- .env
 - routing/route.go
 - models/user.go
 
