@@ -79,11 +79,11 @@ func (u *Users) Create(w http.ResponseWriter, r *http.Request) error {
 		return errors.Wrap(err, "decode user")
 	}
 
-	/*if userRequest.Password != userRequest.RePassword {
+	if userRequest.Password != userRequest.RePassword {
 		err = errors.New("Password not match")
 		u.Log.Printf("ERROR : %+v", err)
 		return api.BadRequestError(err, "Password not match")
-	}*/
+	}
 
 	pass, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), bcrypt.DefaultCost)
 	if err != nil {
