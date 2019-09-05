@@ -1,24 +1,33 @@
 # Rebel Services
 
-Create token auth using jwt token  
+Authorization using RBAC (role based access controller)  
 
 Tasks:
-- create token library on libraries/token/token.go
-- add login routing on routing/route.go
-- create auth controllers on controllers/auths.go
-- create payload login request on payloads/request/login_request.go
-- create GetByUsername method on models/user.go
-- create payload token response on payloads/response/token_response.go 
+- design rbac database on schema/migrate.go and schema/seed.go
+- run go cmd/main.go migrate && go cmd/main.go seed to dump database
+- design rbac routing on routing/route.go
+- create scan access command libraries/auth/access.go
+- run go cmd/main.go scan-access to insert routing into access table
+- create roles service
+- update users service to support roles/multi-roles
+- create middleware to handle authorization checking 
 
 ## File Changes :
 - routing/route.go
 - models/user.go
+- controllers/users.go
+- schema/migrate.go
+- schema/seed.go
+- cmd/main.go
 
 ## New File :
-- libraries/token/token.go
-- controllers/auths.go
-- payloads/request/login_request.go
-- payloads/response/token_response.go
+- libraries/auth/access.go
+- controllers/access.go
+- models/access.go
+- payloads/response/access_response.go
+- controllers/roles.go
+- models/roles.go
+- payloads/request/roles_request.go
+- payloads/response/roles_response.go
 
 ## Adding Dependency :
-- github.com/dgrijalva/jwt-go
