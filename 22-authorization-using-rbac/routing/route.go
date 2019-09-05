@@ -27,12 +27,14 @@ func API(db *sqlx.DB, log *log.Logger) http.Handler {
 	app.Handle(http.MethodDelete, "/users/{id}", u.Delete)
 
 	// Roles Routing
-	roles := controllers.Roles{Db: db, Log: log}
+	/*roles := controllers.Roles{Db: db, Log: log}
 	app.Handle(http.MethodGet, "/roles", roles.List)
 	app.Handle(http.MethodGet, "/roles/{id}", roles.View)
 	app.Handle(http.MethodPost, "/roles", roles.Create)
 	app.Handle(http.MethodPut, "/roles/{id}", roles.Update)
 	app.Handle(http.MethodDelete, "/roles/{id}", roles.Delete)
+	app.Handle(http.MethodPost, "/roles/{id}/access/{access_id}", roles.Grant)
+	app.Handle(http.MethodDelete, "/roles/{id}/access/{access_id}", roles.RemoveAccess)*/
 
 	// Access Routing
 	access := controllers.Access{Db: db, Log: log}

@@ -7,6 +7,7 @@ import (
 	"os"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/jacky-htg/go-services/libraries/auth"
 	"github.com/jacky-htg/go-services/libraries/config"
 	"github.com/jacky-htg/go-services/libraries/database"
 	"github.com/jacky-htg/go-services/schema"
@@ -55,6 +56,11 @@ func run() error {
 			return errors.Wrap(err, "seeding database")
 		}
 		fmt.Println("Seed data complete")
+	case "scan-access":
+		if err := auth.ScanAccess(dbx); err != nil {
+			return errors.Wrap(err, "scan access")
+		}
+		fmt.Println("Scan access complete")
 	}
 
 	return nil
