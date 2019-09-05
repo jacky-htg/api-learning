@@ -34,7 +34,7 @@ type UserRequest struct {
 	IsActive   bool   `json:"is_active,omitempty"`
 }
 
-//Transform NewUserRequest to User
+//Transform UserRequest to User
 func (u *UserRequest) Transform(user *models.User) *models.User {
 	if u.ID == user.ID {
 		if len(u.Username) > 0 {

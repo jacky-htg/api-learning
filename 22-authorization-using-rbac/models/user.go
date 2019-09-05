@@ -76,6 +76,11 @@ func (u *User) Update(ctx context.Context, db *sqlx.DB) error {
 			updated = NOW()
 		WHERE id = ?
 	`)
+
+	if err != nil {
+		return err
+	}
+
 	_, err = stmt.ExecContext(ctx, u.Username, u.Password, u.IsActive, u.ID)
 	return err
 }
@@ -83,6 +88,10 @@ func (u *User) Update(ctx context.Context, db *sqlx.DB) error {
 //Delete : delete user
 func (u *User) Delete(ctx context.Context, db *sqlx.DB) (bool, error) {
 	stmt, err := db.PreparexContext(ctx, `DELETE FROM users WHERE id = ?`)
+	if err != nil {
+		return false, err
+	}
+
 	_, err = stmt.ExecContext(ctx, u.ID)
 	if err != nil {
 		return false, err

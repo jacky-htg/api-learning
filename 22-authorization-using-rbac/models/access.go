@@ -62,6 +62,10 @@ func (u *Access) Create(ctx context.Context, tx *sqlx.Tx) error {
 //Delete : delete user
 func (u *Access) Delete(ctx context.Context, tx *sqlx.Tx) (bool, error) {
 	stmt, err := tx.PreparexContext(ctx, `DELETE FROM access WHERE id = ?`)
+	if err != nil {
+		return false, err
+	}
+
 	_, err = stmt.ExecContext(ctx, u.ID)
 	if err != nil {
 		return false, err
