@@ -32,3 +32,6 @@ Tasks:
 - middleware/auth.go
 
 ## Adding Dependency :
+
+## NOTE
+In this chapter, we already implementation of handling transaction
