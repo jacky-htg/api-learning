@@ -29,5 +29,6 @@ Tasks:
 - models/roles.go
 - payloads/request/roles_request.go
 - payloads/response/roles_response.go
+- middleware/auth.go
 
 ## Adding Dependency :

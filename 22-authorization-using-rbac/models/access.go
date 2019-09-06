@@ -12,9 +12,10 @@ type Access struct {
 	ID       uint32        `db:"id"`
 	ParentID sql.NullInt64 `db:"parent_id"`
 	Name     string        `db:"name"`
+	Alias    string        `db:"alias"`
 }
 
-const qAccess = `SELECT id, parent_id, name FROM access`
+const qAccess = `SELECT id, parent_id, name, alias FROM access`
 
 //List : List of access
 func (u *Access) List(ctx context.Context, tx *sqlx.Tx) ([]Access, error) {
@@ -28,6 +29,11 @@ func (u *Access) GetByName(ctx context.Context, tx *sqlx.Tx) error {
 	return tx.GetContext(ctx, u, qAccess+" WHERE name=?", u.Name)
 }
 
+//GetByAlias : get access by alias
+func (u *Access) GetByAlias(ctx context.Context, tx *sqlx.Tx) error {
+	return tx.GetContext(ctx, u, qAccess+" WHERE alias=?", u.Alias)
+}
+
 //Get : get access by id
 func (u *Access) Get(ctx context.Context, tx *sqlx.Tx) error {
 	return tx.GetContext(ctx, u, qAccess+" WHERE id=?", u.ID)
@@ -36,15 +42,15 @@ func (u *Access) Get(ctx context.Context, tx *sqlx.Tx) error {
 //Create new Access
 func (u *Access) Create(ctx context.Context, tx *sqlx.Tx) error {
 	const query = `
-		INSERT INTO access (parent_id, name, created)
-		VALUES (?, ?, NOW())
+		INSERT INTO access (parent_id, name, alias, created)
+		VALUES (?, ?, ?, NOW())
 	`
 	stmt, err := tx.PreparexContext(ctx, query)
 	if err != nil {
 		return err
 	}
 
-	res, err := stmt.ExecContext(ctx, u.ParentID, u.Name)
+	res, err := stmt.ExecContext(ctx, u.ParentID, u.Name, u.Alias)
 	if err != nil {
 		return err
 	}

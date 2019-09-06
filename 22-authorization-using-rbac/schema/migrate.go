@@ -30,6 +30,7 @@ CREATE TABLE access (
 	id   INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 	parent_id         INT(10) UNSIGNED,
 	name         varchar(255) NOT NULL UNIQUE,
+	alias         varchar(255) NOT NULL UNIQUE,
 	created TIMESTAMP NOT NULL DEFAULT NOW(),
 	PRIMARY KEY (id)
 );`,

@@ -25,7 +25,7 @@ INSERT INTO users (id, username, password, email, is_active) VALUES
 `
 
 const seedAccess string = `
-INSERT INTO access (id, name, created) VALUES (1, 'root', NOW());
+INSERT INTO access (id, name, alias, created) VALUES (1, 'root', 'root', NOW());
 `
 
 const seedRoles string = `

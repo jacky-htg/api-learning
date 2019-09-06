@@ -43,13 +43,16 @@ func ScanAccess(db *sqlx.DB) error {
 		if len(env) > 11 && env[:11] == "app.Handle(" {
 			routings := strings.Split(env[11:(len(env)-1)], ",")
 			httpMethod := routings[0][11:]
-			url := routings[1][2:(len(routings[1]) - 1)]
+			url := strings.TrimSpace(routings[1])
+			url = url[1:(len(url) - 1)]
+			alias := strings.TrimSpace(routings[2])
+
 			//store access except login route
 			if !(url == "/login") {
 				urls := strings.Split(url, "/")
 				controller := urls[1]
 				access := httpMethod + " " + url
-				existingAccess, err = storeAccess(existingAccess, tx, controller, access)
+				existingAccess, err = storeAccess(existingAccess, tx, controller, access, alias)
 				if err != nil {
 					tx.Rollback()
 					return err
@@ -68,15 +71,16 @@ func ScanAccess(db *sqlx.DB) error {
 	return tx.Commit()
 }
 
-func storeAccess(existingAccess []uint32, tx *sqlx.Tx, controller string, access string) ([]uint32, error) {
+func storeAccess(existingAccess []uint32, tx *sqlx.Tx, controller string, access string, alias string) ([]uint32, error) {
 	ctx := context.Background()
 	// get or store parent access
 	existingAccess, id, err := storeController(existingAccess, ctx, tx, controller)
 	if err != nil {
 		return existingAccess, err
 	}
+	nullID := sql.NullInt64{Int64: int64(id), Valid: true}
 
-	u := models.Access{ParentID: id, Name: access}
+	u := models.Access{ParentID: nullID, Name: access, Alias: alias}
 	err = u.GetByName(ctx, tx)
 	if err != sql.ErrNoRows && err != nil {
 		return existingAccess, err
@@ -97,14 +101,14 @@ func storeAccess(existingAccess []uint32, tx *sqlx.Tx, controller string, access
 }
 
 func storeController(existingAccess []uint32, ctx context.Context, tx *sqlx.Tx, controller string) ([]uint32, uint32, error) {
-	u := models.Access{Name: controller}
+	u := models.Access{Name: controller, Alias: controller}
 	err := u.GetByName(ctx, tx)
 	if err != sql.ErrNoRows && err != nil {
 		return existingAccess, 0, err
 	}
 
 	if err == sql.ErrNoRows {
-		u.ParentID = 1
+		u.ParentID = sql.NullInt64{Int64: 1, Valid: true}
 		err = u.Create(ctx, tx)
 		if err != nil {
 			return existingAccess, 0, err
