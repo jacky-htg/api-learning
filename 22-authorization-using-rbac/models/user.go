@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -13,15 +14,57 @@ type User struct {
 	Password string `db:"password"`
 	Email    string `db:"email"`
 	IsActive bool   `db:"is_active"`
+	Roles    []Role `db:"roles"`
 }
 
 const qUsers = `SELECT id, username, password, email, is_active FROM users`
 
 //List : List of users
 func (u *User) List(ctx context.Context, db *sqlx.DB) ([]User, error) {
+	qUsers := `
+	SELECT users.id, users.username, users.password, users.email, users.is_active, 
+		JSON_ARRAYAGG(roles.id) as roles_id, JSON_ARRAYAGG(roles.name) as roles_name
+	FROM users
+	JOIN roles_users ON users.id=roles_users.user_id
+	JOIN roles ON roles_users.role_id=roles.id
+	GROUP BY users.id
+	`
 	list := []User{}
-	err := db.SelectContext(ctx, &list, qUsers)
-	return list, err
+	rows, err := db.Query(qUsers)
+	if err != nil {
+		return list, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var u User
+		var roles_id string
+		var roles_name string
+		err = rows.Scan(&u.ID, &u.Username, &u.Password, &u.Email, &u.IsActive, &roles_id, &roles_name)
+		if err != nil {
+			return list, err
+		}
+
+		var ids []int32
+		err = json.Unmarshal([]byte(roles_id), &ids)
+		if err != nil {
+			return list, err
+		}
+		var names []string
+		err = json.Unmarshal([]byte(roles_name), &names)
+		if err != nil {
+			return list, err
+		}
+
+		for i, v := range ids {
+			u.Roles = append(u.Roles, Role{ID: uint32(v), Name: names[i]})
+		}
+
+		list = append(list, u)
+	}
+
+	return list, rows.Err()
 }
 
 //Get : get user by id

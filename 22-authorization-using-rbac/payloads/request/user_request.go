@@ -6,11 +6,12 @@ import (
 
 //NewUserRequest : format json request for new user
 type NewUserRequest struct {
-	Username   string `json:"username" validate:"required"`
-	Email      string `json:"email" validate:"required"`
-	Password   string `json:"password" validate:"required"`
-	RePassword string `json:"re_password" validate:"required"`
-	IsActive   bool   `json:"is_active"`
+	Username   string        `json:"username" validate:"required"`
+	Email      string        `json:"email" validate:"required"`
+	Password   string        `json:"password" validate:"required"`
+	RePassword string        `json:"re_password" validate:"required"`
+	IsActive   bool          `json:"is_active"`
+	Roles      []models.Role `json:"roles"`
 }
 
 //Transform NewUserRequest to User
@@ -20,6 +21,7 @@ func (u *NewUserRequest) Transform() *models.User {
 	user.Email = u.Email
 	user.Password = u.Password
 	user.IsActive = u.IsActive
+	user.Roles = u.Roles
 
 	return &user
 }
