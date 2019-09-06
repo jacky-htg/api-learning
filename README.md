@@ -31,10 +31,9 @@ From zero to novice. Step by step create golang framework.
 - 20-middleware
 - 21-token
 - 22-auhorization-using-rbac
-- 23-handling-transaction
-- 24-health
-- 25-profiling
-- 26-metrics
-- 27-request-logging
-- 28-panics
-- 29-self-shutdown
+- 23-health
+- 24-profiling
+- 25-metrics
+- 26-request-logging
+- 27-panics
+- 28-self-shutdown
