@@ -28,12 +28,13 @@ func (u *NewUserRequest) Transform() *models.User {
 
 //UserRequest : format json request for user
 type UserRequest struct {
-	ID         uint64 `json:"id,omitempty"  validate:"required"`
-	Username   string `json:"username,omitempty"  validate:"required"`
-	Email      string `json:"email,omitempty"  validate:"required"`
-	Password   string `json:"password,omitempty"  validate:"required"`
-	RePassword string `json:"re_password,omitempty"  validate:"required"`
-	IsActive   bool   `json:"is_active,omitempty"`
+	ID         uint64        `json:"id,omitempty"`
+	Username   string        `json:"username,omitempty"`
+	Email      string        `json:"email,omitempty"`
+	Password   string        `json:"password,omitempty"`
+	RePassword string        `json:"re_password,omitempty"`
+	IsActive   bool          `json:"is_active,omitempty"`
+	Roles      []models.Role `json:"roles,omitempty"`
 }
 
 //Transform UserRequest to User
@@ -49,6 +50,10 @@ func (u *UserRequest) Transform(user *models.User) *models.User {
 
 		if len(u.Password) > 0 {
 			user.Password = u.Password
+		}
+
+		if len(u.Roles) > 0 {
+			user.Roles = u.Roles
 		}
 
 		user.IsActive = u.IsActive

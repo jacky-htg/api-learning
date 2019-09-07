@@ -93,11 +93,15 @@ func (u *Users) Create(w http.ResponseWriter, r *http.Request) error {
 
 	userRequest.Password = string(pass)
 	user := userRequest.Transform()
-	err = user.Create(r.Context(), u.Db)
+	tx := u.Db.MustBegin()
+	err = user.Create(r.Context(), tx)
 	if err != nil {
+		tx.Rollback()
 		u.Log.Printf("ERROR : %+v", err)
 		return errors.Wrap(err, "Create User")
 	}
+
+	tx.Commit()
 
 	var response response.UserResponse
 	response.Transform(user)
@@ -149,11 +153,15 @@ func (u *Users) Update(w http.ResponseWriter, r *http.Request) error {
 		userRequest.ID = user.ID
 	}
 	userUpdate := userRequest.Transform(&user)
-	err = userUpdate.Update(r.Context(), u.Db)
+	tx := u.Db.MustBegin()
+	err = userUpdate.Update(r.Context(), tx)
 	if err != nil {
+		tx.Rollback()
 		u.Log.Printf("ERROR : %+v", err)
 		return errors.Wrap(err, "Update user")
 	}
+
+	tx.Commit()
 
 	var response response.UserResponse
 	response.Transform(userUpdate)

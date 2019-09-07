@@ -80,13 +80,16 @@ func (u *Access) Delete(ctx context.Context, tx *sqlx.Tx) (bool, error) {
 	return true, nil
 }
 
+// GetIDs : get array of access id
 func (u *Access) GetIDs(ctx context.Context, db *sqlx.DB) ([]uint32, error) {
 	var access []uint32
 
-	rows, err := db.Query("SELECT id FROM access WHERE name != 'root'")
+	rows, err := db.QueryContext(ctx, "SELECT id FROM access WHERE name != 'root'")
 	if err != nil {
 		return access, err
 	}
+
+	defer rows.Close()
 
 	for rows.Next() {
 		var id uint32

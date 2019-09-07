@@ -2,8 +2,10 @@ package models
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 
+	"github.com/jacky-htg/go-services/libraries/array"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -83,12 +85,12 @@ func (u *User) GetByUsername(ctx context.Context, db *sqlx.DB) error {
 }
 
 //Create new user
-func (u *User) Create(ctx context.Context, db *sqlx.DB) error {
+func (u *User) Create(ctx context.Context, tx *sqlx.Tx) error {
 	const query = `
 		INSERT INTO users (username, password, email, is_active, created, updated)
 		VALUES (?, ?, ?, ?, NOW(), NOW())
 	`
-	stmt, err := db.PreparexContext(ctx, query)
+	stmt, err := tx.PreparexContext(ctx, query)
 	if err != nil {
 		return err
 	}
@@ -105,13 +107,22 @@ func (u *User) Create(ctx context.Context, db *sqlx.DB) error {
 
 	u.ID = uint64(id)
 
+	if len(u.Roles) > 0 {
+		for _, r := range u.Roles {
+			err = u.AddRole(ctx, tx, r)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
 	return nil
 }
 
 //Update : update user
-func (u *User) Update(ctx context.Context, db *sqlx.DB) error {
+func (u *User) Update(ctx context.Context, tx *sqlx.Tx) error {
 
-	stmt, err := db.PreparexContext(ctx, `
+	stmt, err := tx.PreparexContext(ctx, `
 		UPDATE users 
 		SET username = ?,
 			password = ?,
@@ -121,11 +132,41 @@ func (u *User) Update(ctx context.Context, db *sqlx.DB) error {
 	`)
 
 	if err != nil {
+		println("error query update users")
 		return err
 	}
 
 	_, err = stmt.ExecContext(ctx, u.Username, u.Password, u.IsActive, u.ID)
-	return err
+	if err != nil {
+		return err
+	}
+
+	existingRoles, err := u.GetRoleIDs(ctx, tx)
+	if err != nil && err != sql.ErrNoRows {
+		return err
+	}
+
+	for _, r := range u.Roles {
+		isExist, _ := array.InArray(r.ID, existingRoles)
+		if !isExist {
+			err = u.AddRole(ctx, tx, r)
+			if err != nil {
+				return err
+			}
+		} else {
+			temp := array.Remove(existingRoles, r.ID)
+			existingRoles = temp.([]uint32)
+		}
+	}
+
+	for _, r := range existingRoles {
+		err = u.DeleteRole(ctx, tx, r)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 //Delete : delete user
@@ -141,4 +182,52 @@ func (u *User) Delete(ctx context.Context, db *sqlx.DB) (bool, error) {
 	}
 
 	return true, nil
+}
+
+// GetRoleIDs : get array of role id from user
+func (u *User) GetRoleIDs(ctx context.Context, tx *sqlx.Tx) ([]uint32, error) {
+	var roles []uint32
+
+	rows, err := tx.QueryContext(ctx, "SELECT role_id FROM roles_users WHERE user_id = ?", u.ID)
+	if err != nil {
+		println("error query get role ids")
+		return roles, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var id uint32
+		err = rows.Scan(&id)
+		if err != nil {
+			return roles, err
+		}
+		roles = append(roles, id)
+	}
+
+	return roles, rows.Err()
+}
+
+//AddRole to user
+func (u *User) AddRole(ctx context.Context, tx *sqlx.Tx, r Role) error {
+	stmt, err := tx.PreparexContext(ctx, `INSERT INTO roles_users (role_id, user_id) VALUES (?, ?)`)
+	if err != nil {
+		println("error query add role")
+		return err
+	}
+
+	_, err = stmt.ExecContext(ctx, r.ID, u.ID)
+	return err
+}
+
+//DeleteRole from user
+func (u *User) DeleteRole(ctx context.Context, tx *sqlx.Tx, roleID uint32) error {
+	stmt, err := tx.PreparexContext(ctx, `DELETE FROM roles_users WHERE role_id=? AND user_id=?`)
+	if err != nil {
+		println("error query delete role")
+		return err
+	}
+
+	_, err = stmt.ExecContext(ctx, roleID, u.ID)
+	return err
 }
