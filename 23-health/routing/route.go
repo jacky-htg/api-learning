@@ -13,7 +13,7 @@ import (
 func mid(db *sqlx.DB, log *log.Logger) []api.Middleware {
 	var mw []api.Middleware
 	mw = append(mw, middleware.Errors(db, log))
-	mw = append(mw, middleware.Auths(db, log, []string{"/login"}))
+	mw = append(mw, middleware.Auths(db, log, []string{"/login", "/health"}))
 
 	return mw
 }
@@ -24,7 +24,7 @@ func API(db *sqlx.DB, log *log.Logger) http.Handler {
 
 	// Health Routing
 	{
-		check := Check{db: db}
+		check := controllers.Checks{Db: db}
 		app.Handle(http.MethodGet, "/health", check.Health)
 	}
 
