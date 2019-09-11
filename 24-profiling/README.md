@@ -1,17 +1,16 @@
 # Rebel Services
 
-Health Check with objective to create  new /health endpoint that returns 200 when the database is ready.
+Profiling.
 
 Tasks:
-- Create StatusCheck function on libraries/database/database.go
-- Add a /health endpoint on routing/route.go
-- Create check controller on controllers/checks.go
+- Import net/http/pprof to register the pprof profiler.
+- Launch a second HTTP service listening on a different port.
+- http://localhost:6060/debug/pprof/
 
 ## File Changes :
-- routing/route.go
-- libraries/database/database.go
+- main.go
 
 ## New File :
-- controllers/checks.go
 
 ## Adding Dependency :
+- https://golang.org/pkg/net/http/pprof/

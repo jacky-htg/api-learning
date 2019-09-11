@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net/http"
+	_ "net/http/pprof" // Register the pprof handlers
 	"os"
 	"os/signal"
 	"syscall"
@@ -64,6 +65,11 @@ func run() error {
 		log.Printf("main: server listening on %s", server.Addr)
 		serverErrors <- server.ListenAndServe()
 	}()
+
+	// Pprof server. Beware to open this code! Don’t leave your debugging information open to the world!
+	/*go func() {
+		log.Fatal(http.ListenAndServe("localhost:6060", nil))
+	}()*/
 
 	// Make a channel to listen for an interrupt or terminate signal from the OS.
 	// Use a buffered channel because the signal package requires it.
