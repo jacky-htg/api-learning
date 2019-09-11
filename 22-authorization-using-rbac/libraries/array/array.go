@@ -2,6 +2,32 @@ package array
 
 import "reflect"
 
+type ArrStr string
+
+func (s ArrStr) InArray(val string, array []string) (exists bool, index int) {
+	exists = false
+	index = -1
+
+	for i, s := range array {
+		if s == val {
+			exists = true
+			index = i
+			return
+		}
+	}
+
+	return
+}
+
+func (s ArrStr) Remove(array []string, value string) []string {
+	isExist, index := s.InArray(value, array)
+	if isExist {
+		array = append(array[:index], array[(index+1):]...)
+	}
+
+	return array
+}
+
 func InArray(val interface{}, array interface{}) (exists bool, index int) {
 	exists = false
 	index = -1

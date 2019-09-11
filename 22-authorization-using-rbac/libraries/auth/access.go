@@ -51,7 +51,7 @@ func ScanAccess(db *sqlx.DB) error {
 			if !(url == "/login") {
 				urls := strings.Split(url, "/")
 				controller := urls[1]
-				access := httpMethod + " " + url
+				access := strings.ToUpper(httpMethod) + " " + url
 				existingAccess, err = storeAccess(existingAccess, tx, controller, access, alias)
 				if err != nil {
 					tx.Rollback()

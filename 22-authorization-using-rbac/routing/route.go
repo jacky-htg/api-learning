@@ -10,9 +10,17 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+func mid(db *sqlx.DB, log *log.Logger) []api.Middleware {
+	var mw []api.Middleware
+	mw = append(mw, middleware.Errors(db, log))
+	mw = append(mw, middleware.Auths(db, log, []string{"/login"}))
+
+	return mw
+}
+
 //API : handler api
 func API(db *sqlx.DB, log *log.Logger) http.Handler {
-	app := api.NewApp(log, middleware.Errors(log))
+	app := api.NewApp(db, log, mid(db, log)...)
 
 	// Auth Routing
 	auth := controllers.Auths{Db: db, Log: log}

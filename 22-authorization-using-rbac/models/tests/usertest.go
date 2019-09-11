@@ -18,6 +18,7 @@ type User struct {
 //Crud : unit test  for create get and delete user function
 func (u *User) Crud(t *testing.T) {
 	ctx := context.Background()
+	tx := u.Db.MustBegin()
 
 	u0 := models.User{
 		Username: "Aladin",
@@ -26,10 +27,12 @@ func (u *User) Crud(t *testing.T) {
 		IsActive: true,
 	}
 
-	err := u0.Create(ctx, u.Db)
+	err := u0.Create(ctx, tx)
 	if err != nil {
+		tx.Rollback()
 		t.Fatalf("creating user u0: %s", err)
 	}
+	tx.Commit()
 
 	u1 := models.User{
 		ID: u0.ID,
@@ -37,6 +40,7 @@ func (u *User) Crud(t *testing.T) {
 
 	err = u1.Get(ctx, u.Db)
 	if err != nil {
+		tx.Rollback()
 		t.Fatalf("getting user u1: %s", err)
 	}
 
@@ -45,10 +49,13 @@ func (u *User) Crud(t *testing.T) {
 	}
 
 	u1.IsActive = false
-	err = u1.Update(ctx, u.Db)
+	err = u1.Update(ctx, tx)
 	if err != nil {
+		tx.Rollback()
 		t.Fatalf("update user u1: %s", err)
 	}
+
+	tx.Commit()
 
 	u2 := models.User{
 		ID: u1.ID,

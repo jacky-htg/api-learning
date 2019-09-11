@@ -5,13 +5,13 @@ import (
 	"net/http"
 
 	"github.com/jacky-htg/go-services/libraries/api"
+	"github.com/jmoiron/sqlx"
 )
 
-func Errors(log *log.Logger) api.Middleware {
+func Errors(db *sqlx.DB, log *log.Logger) api.Middleware {
 	fn := func(before api.Handler) api.Handler {
 		h := func(w http.ResponseWriter, r *http.Request) error {
 
-			// Call the handler and catch any propagated error.
 			err := before(w, r)
 
 			if err != nil {

@@ -3,7 +3,9 @@ package models
 import (
 	"context"
 	"database/sql"
+	"errors"
 
+	"github.com/jacky-htg/go-services/libraries/token"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -101,4 +103,39 @@ func (u *Access) GetIDs(ctx context.Context, db *sqlx.DB) ([]uint32, error) {
 	}
 
 	return access, rows.Err()
+}
+
+// IsAUth for check user authorization
+func (u *Access) IsAuth(ctx context.Context, db *sqlx.DB, tokenparam interface{}, controller string, route string) (bool, error) {
+	query := `
+	SELECT true
+	FROM users
+	JOIN roles_users ON users.id = roles_users.user_id
+	JOIN roles ON roles_users.role_id = roles.id
+	JOIN access_roles ON roles.id = access_roles.role_id
+	JOIN access ON access_roles.access_id = access.id
+	WHERE (access.name = 'root' OR access.name = ? OR access.name = ?)
+	AND users.id = ?
+	`
+	var isAuth bool
+	var err error
+
+	if tokenparam == nil {
+		return isAuth, errors.New("Bad request for token")
+	}
+
+	isValid, username := token.ValidateToken(tokenparam.(string))
+	if !isValid {
+		return isAuth, errors.New("Bad request for invalid token")
+	}
+
+	user := User{Username: username}
+	err = user.GetByUsername(ctx, db)
+	if err != nil {
+		return isAuth, err
+	}
+
+	err = db.QueryRowContext(ctx, query, controller, route, user.ID).Scan(&isAuth)
+
+	return isAuth, err
 }

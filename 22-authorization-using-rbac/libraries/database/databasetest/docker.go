@@ -10,7 +10,7 @@ import (
 func StartContainer(t *testing.T) {
 	t.Helper()
 
-	cmd := exec.Command("docker", "run", "-d", "--name", "rebel_mysql", "--publish", "33060:3306", "--env", "MYSQL_ROOT_PASSWORD=1234", "--env", "MYSQL_DATABASE=rebel_db", "mysql:5.7.20")
+	cmd := exec.Command("docker", "run", "-d", "--name", "rebel_mysql", "--publish", "33060:3306", "--env", "MYSQL_ROOT_PASSWORD=1234", "--env", "MYSQL_DATABASE=rebel_db", "mysql:8")
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	if err := cmd.Run(); err != nil {

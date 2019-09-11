@@ -11,6 +11,7 @@ Tasks:
 - create roles service
 - update users service to support roles/multi-roles
 - create middleware to handle authorization checking 
+- update api testing to support all feature in this chapter
 
 ## File Changes :
 - routing/route.go
@@ -19,6 +20,8 @@ Tasks:
 - schema/migrate.go
 - schema/seed.go
 - cmd/main.go
+- main_test.go
+- controllers/tests/userstest.go
 
 ## New File :
 - libraries/auth/access.go
@@ -30,6 +33,7 @@ Tasks:
 - payloads/request/roles_request.go
 - payloads/response/roles_response.go
 - middleware/auth.go
+- controllers/tests/authstest.go
 
 ## Adding Dependency :
 

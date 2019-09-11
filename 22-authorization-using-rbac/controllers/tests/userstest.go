@@ -13,12 +13,15 @@ import (
 
 //Users : struct for set Users Dependency Injection
 type Users struct {
-	App http.Handler
+	App   http.Handler
+	Token string
 }
 
 //List : http handler for returning list of users
 func (u *Users) List(t *testing.T) {
 	req := httptest.NewRequest("GET", "/users", nil)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Token", u.Token)
 	resp := httptest.NewRecorder()
 
 	u.App.ServeHTTP(resp, req)
@@ -33,13 +36,14 @@ func (u *Users) List(t *testing.T) {
 	}
 
 	want := map[string]interface{}{
-		"status_code":    "REBEL-200",
-		"status_message": "OK",
+		"status_code":    string("REBEL-200"),
+		"status_message": string("OK"),
 		"data": []interface{}{
 			map[string]interface{}{
 				"id":        float64(1),
-				"username":  "jackyhtg",
-				"is_active": true,
+				"username":  string("jackyhtg"),
+				"is_active": bool(true),
+				"roles":     []interface{}{map[string]interface{}{"ID": float64(1), "Name": string("superadmin")}},
 			},
 		},
 	}
@@ -73,6 +77,7 @@ func (u *Users) Create(t *testing.T) map[string]interface{} {
 
 	req := httptest.NewRequest("POST", "/users", body)
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Token", u.Token)
 	resp := httptest.NewRecorder()
 
 	u.App.ServeHTTP(resp, req)
@@ -98,6 +103,7 @@ func (u *Users) Create(t *testing.T) map[string]interface{} {
 			"id":        c["id"],
 			"username":  "peterpan",
 			"is_active": true,
+			"roles":     nil,
 		},
 	}
 
@@ -114,6 +120,7 @@ func (u *Users) Create(t *testing.T) map[string]interface{} {
 func (u *Users) View(t *testing.T, id float64) {
 	req := httptest.NewRequest("GET", "/users/"+fmt.Sprintf("%d", int(id)), nil)
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Token", u.Token)
 	resp := httptest.NewRecorder()
 
 	u.App.ServeHTTP(resp, req)
@@ -134,6 +141,7 @@ func (u *Users) View(t *testing.T, id float64) {
 			"id":        id,
 			"username":  "peterpan",
 			"is_active": true,
+			"roles":     nil,
 		},
 	}
 
@@ -160,6 +168,7 @@ func (u *Users) Update(t *testing.T, id float64) {
 
 	req := httptest.NewRequest("PUT", "/users/"+fmt.Sprintf("%d", int(id)), body)
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Token", u.Token)
 	resp := httptest.NewRecorder()
 
 	u.App.ServeHTTP(resp, req)
@@ -179,6 +188,7 @@ func (u *Users) Update(t *testing.T, id float64) {
 			"id":        id,
 			"username":  "gatholoco",
 			"is_active": false,
+			"roles":     nil,
 		},
 	}
 
@@ -191,6 +201,7 @@ func (u *Users) Update(t *testing.T, id float64) {
 func (u *Users) Delete(t *testing.T, id float64) {
 	req := httptest.NewRequest("DELETE", "/users/"+fmt.Sprintf("%d", int(id)), nil)
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Token", u.Token)
 	resp := httptest.NewRecorder()
 
 	u.App.ServeHTTP(resp, req)

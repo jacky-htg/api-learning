@@ -5,9 +5,10 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi"
+	"github.com/jmoiron/sqlx"
 )
 
-func NewApp(log *log.Logger, mw ...Middleware) *App {
+func NewApp(db *sqlx.DB, log *log.Logger, mw ...Middleware) *App {
 	return &App{
 		log: log,
 		mux: chi.NewRouter(),
