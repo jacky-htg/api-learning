@@ -14,6 +14,7 @@ func mid(db *sqlx.DB, log *log.Logger) []api.Middleware {
 	var mw []api.Middleware
 	mw = append(mw, middleware.Errors(db, log))
 	mw = append(mw, middleware.Auths(db, log, []string{"/login", "/health"}))
+	mw = append(mw, middleware.Metrics())
 
 	return mw
 }

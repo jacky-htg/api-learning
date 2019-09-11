@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	_ "expvar" // Register the expvar handlers
 	"log"
 	"net/http"
 	_ "net/http/pprof" // Register the pprof handlers
@@ -66,10 +67,11 @@ func run() error {
 		serverErrors <- server.ListenAndServe()
 	}()
 
-	// Pprof server. Beware to open this code! Don’t leave your debugging information open to the world!
-	/*go func() {
-		log.Fatal(http.ListenAndServe("localhost:6060", nil))
-	}()*/
+	// /debug/pprof - Pprof server.
+	// /debug/vars - Added to the default mux by importing the expvar package.
+	go func() {
+		log.Fatal(http.ListenAndServe("localhost:6060", http.DefaultServeMux))
+	}()
 
 	// Make a channel to listen for an interrupt or terminate signal from the OS.
 	// Use a buffered channel because the signal package requires it.

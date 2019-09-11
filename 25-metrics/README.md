@@ -1,16 +1,17 @@
 # Rebel Services
 
-Profiling.
+Metrics.
 
 Tasks:
-- Import net/http/pprof to register the pprof profiler.
-- Launch a second HTTP service listening on a different port.
-- http://localhost:6060/debug/pprof/
+- Import expvar to expose custom variables to external clients.
+- Add middleware to track number of requests, number of errors, and current goroutine count.
+- http://localhost:6060/debug/vars
 
 ## File Changes :
 - main.go
+- routing/route.go
 
 ## New File :
+- middleware/metrics.go
 
 ## Adding Dependency :
-- https://golang.org/pkg/net/http/pprof/
