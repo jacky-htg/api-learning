@@ -5,9 +5,9 @@ Modified main.go
 - call config if APP env is not exist
 - change port using config
 
-Modified services/database/database.go
+Modified libraries/database/database.go
 - change db driver and source using config
 
 ## New File :
 - .env
-- services/config/config.go
+- libraries/config/config.go
