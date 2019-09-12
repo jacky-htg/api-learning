@@ -7,4 +7,4 @@
 - cmd/main.go
 - packages/auth/controllers/users.go
 - packages/auth/models/user.go
-- service/database/database.go
+- libraries/database/database.go
