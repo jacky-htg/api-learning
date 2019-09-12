@@ -10,8 +10,8 @@ import (
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/jacky-htg/go-services/libraries/database"
 	"github.com/jacky-htg/go-services/packages/auth/controllers"
-	"github.com/jacky-htg/go-services/services/database"
 )
 
 func main() {

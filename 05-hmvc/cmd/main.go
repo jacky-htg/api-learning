@@ -6,8 +6,8 @@ import (
 	"os"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/jacky-htg/go-services/libraries/database"
 	"github.com/jacky-htg/go-services/schema"
-	"github.com/jacky-htg/go-services/services/database"
 )
 
 func main() {
