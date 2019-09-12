@@ -35,5 +35,6 @@ From zero to novice. Step by step create golang framework.
 - 24-profiling
 - 25-metrics
 - 26-request-logging
-- 27-panics
-- 28-self-shutdown
+- 27-context-2
+- 28-panics
+- 29-self-shutdown
