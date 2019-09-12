@@ -1,12 +1,27 @@
 package api
 
 import (
+	"context"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/jmoiron/sqlx"
 )
+
+// ctxKey represents the type of value for the context key.
+type ctxKey int
+
+// KeyValues is how request values or stored/retrieved.
+const KeyValues ctxKey = 1
+
+// Values carries information about each request.
+type Values struct {
+	StatusCode int
+	Response   []byte
+	Start      time.Time
+}
 
 func NewApp(db *sqlx.DB, log *log.Logger, mw ...Middleware) *App {
 	return &App{
@@ -33,6 +48,14 @@ func (a *App) Handle(method, url string, h Handler) {
 	h = wrapMiddleware(a.mw, h)
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
+		// Create a Values struct to record state for the request. Store the
+		// address in the request's context so it is sent down the call chain.
+		v := Values{
+			Start: time.Now(),
+		}
+		ctx := context.WithValue(r.Context(), KeyValues, &v)
+		r = r.WithContext(ctx)
+
 		// Call the handler and catch any propagated error.
 		err := h(w, r)
 

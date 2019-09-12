@@ -38,7 +38,7 @@ func (u *Users) List(w http.ResponseWriter, r *http.Request) error {
 		listResponse = append(listResponse, &userResponse)
 	}
 
-	return api.ResponseOK(w, listResponse, http.StatusOK)
+	return api.ResponseOK(r.Context(), w, listResponse, http.StatusOK)
 }
 
 //View : http handler for retrieve user by id
@@ -67,7 +67,7 @@ func (u *Users) View(w http.ResponseWriter, r *http.Request) error {
 
 	var response response.UserResponse
 	response.Transform(&user)
-	return api.ResponseOK(w, response, http.StatusOK)
+	return api.ResponseOK(r.Context(), w, response, http.StatusOK)
 }
 
 //Create : http handler for create new user
@@ -105,7 +105,7 @@ func (u *Users) Create(w http.ResponseWriter, r *http.Request) error {
 
 	var response response.UserResponse
 	response.Transform(user)
-	return api.ResponseOK(w, response, http.StatusCreated)
+	return api.ResponseOK(r.Context(), w, response, http.StatusCreated)
 }
 
 //Update : http handler for update user by id
@@ -165,7 +165,7 @@ func (u *Users) Update(w http.ResponseWriter, r *http.Request) error {
 
 	var response response.UserResponse
 	response.Transform(userUpdate)
-	return api.ResponseOK(w, response, http.StatusOK)
+	return api.ResponseOK(r.Context(), w, response, http.StatusOK)
 }
 
 //Delete : http handler for delete user by id
@@ -198,5 +198,5 @@ func (u *Users) Delete(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	return api.ResponseOK(w, nil, http.StatusNoContent)
+	return api.ResponseOK(r.Context(), w, nil, http.StatusNoContent)
 }

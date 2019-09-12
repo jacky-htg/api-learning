@@ -51,5 +51,5 @@ func (u *Auths) Login(w http.ResponseWriter, r *http.Request) error {
 	var response response.TokenResponse
 	response.Token = token
 
-	return api.ResponseOK(w, response, http.StatusOK)
+	return api.ResponseOK(r.Context(), w, response, http.StatusOK)
 }

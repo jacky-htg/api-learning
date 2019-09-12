@@ -35,5 +35,5 @@ func (u *Access) List(w http.ResponseWriter, r *http.Request) error {
 		listResponse = append(listResponse, &accessResponse)
 	}
 
-	return api.ResponseOK(w, listResponse, http.StatusOK)
+	return api.ResponseOK(r.Context(), w, listResponse, http.StatusOK)
 }

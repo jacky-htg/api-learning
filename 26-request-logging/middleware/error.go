@@ -19,7 +19,7 @@ func Errors(db *sqlx.DB, log *log.Logger) api.Middleware {
 				log.Printf("ERROR : %+v", err)
 
 				// Response to the error.
-				if err := api.ResponseError(w, err); err != nil {
+				if err := api.ResponseError(r.Context(), w, err); err != nil {
 					return err
 				}
 			}

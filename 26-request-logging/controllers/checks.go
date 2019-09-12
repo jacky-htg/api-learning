@@ -30,5 +30,5 @@ func (u *Checks) Health(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	health.Status = "ok"
-	return api.ResponseOK(w, health, http.StatusOK)
+	return api.ResponseOK(r.Context(), w, health, http.StatusOK)
 }

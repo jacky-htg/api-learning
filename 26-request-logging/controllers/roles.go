@@ -37,7 +37,7 @@ func (u *Roles) List(w http.ResponseWriter, r *http.Request) error {
 		listResponse = append(listResponse, &roleResponse)
 	}
 
-	return api.ResponseOK(w, listResponse, http.StatusOK)
+	return api.ResponseOK(r.Context(), w, listResponse, http.StatusOK)
 }
 
 //View : http handler for retrieve role by id
@@ -66,7 +66,7 @@ func (u *Roles) View(w http.ResponseWriter, r *http.Request) error {
 
 	var response response.RoleResponse
 	response.Transform(&role)
-	return api.ResponseOK(w, response, http.StatusOK)
+	return api.ResponseOK(r.Context(), w, response, http.StatusOK)
 }
 
 //Create : http handler for create new role
@@ -87,7 +87,7 @@ func (u *Roles) Create(w http.ResponseWriter, r *http.Request) error {
 
 	var response response.RoleResponse
 	response.Transform(role)
-	return api.ResponseOK(w, response, http.StatusCreated)
+	return api.ResponseOK(r.Context(), w, response, http.StatusCreated)
 }
 
 //Update : http handler for update role by id
@@ -127,7 +127,7 @@ func (u *Roles) Update(w http.ResponseWriter, r *http.Request) error {
 
 	var response response.RoleResponse
 	response.Transform(roleUpdate)
-	return api.ResponseOK(w, response, http.StatusOK)
+	return api.ResponseOK(r.Context(), w, response, http.StatusOK)
 }
 
 //Delete : http handler for delete role by id
@@ -160,7 +160,7 @@ func (u *Roles) Delete(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	return api.ResponseOK(w, nil, http.StatusNoContent)
+	return api.ResponseOK(r.Context(), w, nil, http.StatusNoContent)
 }
 
 //Grant : http handler for grant access to role
@@ -205,7 +205,7 @@ func (u *Roles) Grant(w http.ResponseWriter, r *http.Request) error {
 		return errors.Wrap(err, "Grant role")
 	}
 
-	return api.ResponseOK(w, nil, http.StatusOK)
+	return api.ResponseOK(r.Context(), w, nil, http.StatusOK)
 }
 
 //Revoke : http handler for revoke access from role
@@ -250,5 +250,5 @@ func (u *Roles) Revoke(w http.ResponseWriter, r *http.Request) error {
 		return errors.Wrap(err, "Revoke role")
 	}
 
-	return api.ResponseOK(w, nil, http.StatusOK)
+	return api.ResponseOK(r.Context(), w, nil, http.StatusOK)
 }

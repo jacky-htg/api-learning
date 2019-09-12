@@ -1,17 +1,24 @@
 # Rebel Services
 
-Metrics.
+Request Logging.
 
 Tasks:
-- Import expvar to expose custom variables to external clients.
-- Add middleware to track number of requests, number of errors, and current goroutine count.
-- http://localhost:6060/debug/vars
+- Create middleware to log each request on middleware/logger.go
+- Manipulate request with new values and passing it down through context
+- Ensure api.Response updates the value.
 
 ## File Changes :
-- main.go
+- libraries/api/app.go
+- middleware/error.go
+- libraries/api/response.go
 - routing/route.go
+- controllers/access.go
+- controllers/auths.go
+- controllers/checks.go
+- controllers/roles.go
+- controllers/users.go
 
 ## New File :
-- middleware/metrics.go
+- middleware/logger.go
 
 ## Adding Dependency :
