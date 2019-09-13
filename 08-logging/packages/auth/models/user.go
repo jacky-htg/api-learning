@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"errors"
 )
 
 //User : struct of User
@@ -17,21 +18,22 @@ const qUsers = `SELECT id, username, password, email, is_active FROM users`
 
 //List : List of users
 func (u *User) List(db *sql.DB) ([]User, error) {
-	return scanUsers(qUsers, db)
-}
-
-func scanUsers(q string, db *sql.DB) ([]User, error) {
 	list := []User{}
-	rows, err := db.Query(q)
+
+	rows, err := db.Query(qUsers)
 	if err != nil {
 		return list, err
 	}
 
+	defer rows.Close()
+
 	for rows.Next() {
 		var user User
-		if err := rows.Scan(&user.ID, &user.Username, &user.Password, &user.Email, &user.IsActive); err != nil {
+		err = rows.Scan(getArgs(&user)...)
+		if err != nil {
 			return list, err
 		}
+
 		list = append(list, user)
 	}
 
@@ -39,5 +41,19 @@ func scanUsers(q string, db *sql.DB) ([]User, error) {
 		return list, err
 	}
 
+	if len(list) <= 0 {
+		return list, errors.New("Users not found")
+	}
+
 	return list, nil
+}
+
+func getArgs(user *User) []interface{} {
+	var args []interface{}
+	args = append(args, &user.ID)
+	args = append(args, &user.Username)
+	args = append(args, &user.Password)
+	args = append(args, &user.Email)
+	args = append(args, &user.IsActive)
+	return args
 }
