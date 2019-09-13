@@ -10,7 +10,6 @@ import (
 	"github.com/jacky-htg/go-services/libraries/config"
 	"github.com/jacky-htg/go-services/libraries/database"
 	"github.com/jacky-htg/go-services/schema"
-	"github.com/pkg/errors"
 )
 
 func main() {
@@ -34,20 +33,20 @@ func run() error {
 
 	db, err := database.Open()
 	if err != nil {
-		return errors.Wrap(err, "connecting to db")
+		return fmt.Errorf("connecting to db: %v", err)
 	}
 	defer db.Close()
 
 	switch flag.Arg(0) {
 	case "migrate":
 		if err := schema.Migrate(db); err != nil {
-			return errors.Wrap(err, "applying migrations")
+			return fmt.Errorf("applying migrations: %v", err)
 		}
 		fmt.Println("Migrations complete")
 
 	case "seed":
 		if err := schema.Seed(db); err != nil {
-			return errors.Wrap(err, "seeding database")
+			return fmt.Errorf("seeding database: %v", err)
 		}
 		fmt.Println("Seed data complete")
 	}
