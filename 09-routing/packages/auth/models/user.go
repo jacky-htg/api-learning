@@ -25,6 +25,8 @@ func (u *User) List(db *sql.DB) ([]User, error) {
 		return list, err
 	}
 
+	defer rows.Close()
+
 	for rows.Next() {
 		var user User
 		err = rows.Scan(getArgs(&user)...)
