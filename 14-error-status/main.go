@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -13,7 +14,6 @@ import (
 	"github.com/jacky-htg/go-services/libraries/config"
 	"github.com/jacky-htg/go-services/libraries/database"
 	"github.com/jacky-htg/go-services/routing"
-	"github.com/pkg/errors"
 )
 
 func main() {
@@ -45,7 +45,7 @@ func run() error {
 
 	db, err := database.Open()
 	if err != nil {
-		return errors.Wrap(err, "connecting to db")
+		return fmt.Errorf("connecting to db: %v", err)
 	}
 	defer db.Close()
 
@@ -76,7 +76,7 @@ func run() error {
 	// Blocking main and waiting for shutdown.
 	select {
 	case err := <-serverErrors:
-		return errors.Wrap(err, "Starting server")
+		return fmt.Errorf("Starting server: %v", err)
 
 	case <-shutdown:
 
@@ -95,7 +95,7 @@ func run() error {
 		}
 
 		if err != nil {
-			return errors.Wrap(err, "could not stop server gracefully")
+			return fmt.Errorf("could not stop server gracefully: %v", err)
 		}
 	}
 

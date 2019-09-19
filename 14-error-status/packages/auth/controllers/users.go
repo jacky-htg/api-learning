@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -26,7 +27,7 @@ func (u *Users) List(w http.ResponseWriter, r *http.Request) error {
 	var user models.User
 	list, err := user.List(u.Db)
 	if err != nil {
-		return errors.Wrap(err, "getting users list")
+		return fmt.Errorf("Getting user list: %v", err)
 	}
 
 	var listResponse []*response.UserResponse
@@ -45,13 +46,13 @@ func (u *Users) View(w http.ResponseWriter, r *http.Request) error {
 
 	id, err := strconv.Atoi(paramID)
 	if err != nil {
-		return errors.Wrap(err, "type casting")
+		return fmt.Errorf("Type casting: %v", err)
 	}
 
 	var user models.User
 	err = user.Get(u.Db, int64(id))
 	if err != nil {
-		return errors.Wrap(err, "Get User")
+		return fmt.Errorf("Get user: %v", err)
 	}
 
 	var response response.UserResponse
@@ -64,7 +65,7 @@ func (u *Users) Create(w http.ResponseWriter, r *http.Request) error {
 	var userRequest request.NewUserRequest
 	err := api.Decode(r, &userRequest)
 	if err != nil {
-		return errors.Wrap(err, "decode user")
+		return fmt.Errorf("Decode user: %v", err)
 	}
 
 	if userRequest.Password != userRequest.RePassword {
@@ -73,14 +74,14 @@ func (u *Users) Create(w http.ResponseWriter, r *http.Request) error {
 
 	pass, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return errors.Wrap(err, "Generate password")
+		return fmt.Errorf("Generate password: %v", err)
 	}
 
 	userRequest.Password = string(pass)
 	user := userRequest.Transform()
 	err = user.Create(u.Db)
 	if err != nil {
-		return errors.Wrap(err, "Create User")
+		return fmt.Errorf("Create user: %v", err)
 	}
 
 	var response response.UserResponse
@@ -94,19 +95,19 @@ func (u *Users) Update(w http.ResponseWriter, r *http.Request) error {
 
 	id, err := strconv.Atoi(paramID)
 	if err != nil {
-		return errors.Wrap(err, "type casting paramID")
+		return fmt.Errorf("Type casting paramID: %v", err)
 	}
 
 	var user models.User
 	err = user.Get(u.Db, int64(id))
 	if err != nil {
-		return errors.Wrap(err, "Get User")
+		return fmt.Errorf("Get user: %v", err)
 	}
 
 	var userRequest request.UserRequest
 	err = api.Decode(r, &userRequest)
 	if err != nil {
-		return errors.Wrap(err, "Decode User")
+		return fmt.Errorf("Decode user: %v", err)
 	}
 
 	if len(userRequest.Password) > 0 && userRequest.Password != userRequest.RePassword {
@@ -116,7 +117,7 @@ func (u *Users) Update(w http.ResponseWriter, r *http.Request) error {
 	if len(userRequest.Password) > 0 {
 		pass, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), bcrypt.DefaultCost)
 		if err != nil {
-			return errors.Wrap(err, "Generate password")
+			return fmt.Errorf("Generate password: %v", err)
 		}
 
 		userRequest.Password = string(pass)
@@ -128,7 +129,7 @@ func (u *Users) Update(w http.ResponseWriter, r *http.Request) error {
 	userUpdate := userRequest.Transform(&user)
 	err = userUpdate.Update(u.Db)
 	if err != nil {
-		return errors.Wrap(err, "Update user")
+		return fmt.Errorf("Update user: %v", err)
 	}
 
 	var response response.UserResponse
@@ -142,18 +143,18 @@ func (u *Users) Delete(w http.ResponseWriter, r *http.Request) error {
 
 	id, err := strconv.Atoi(paramID)
 	if err != nil {
-		return errors.Wrap(err, "type casting paramID")
+		return fmt.Errorf("Type casting paramID: %v", err)
 	}
 
 	var user models.User
 	err = user.Get(u.Db, int64(id))
 	if err != nil {
-		return errors.Wrap(err, "Get user")
+		return fmt.Errorf("Get user: %v", err)
 	}
 
 	isDelete, err := user.Delete(u.Db)
 	if err != nil {
-		return errors.Wrap(err, "Delete user")
+		return fmt.Errorf("Delete user: %v", err)
 	}
 
 	if !isDelete {
