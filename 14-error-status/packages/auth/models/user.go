@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"net/http"
 
-	"github.com/jacky-htg/go-services/services/api"
+	"github.com/jacky-htg/go-services/libraries/api"
 )
 
 //User : struct of User

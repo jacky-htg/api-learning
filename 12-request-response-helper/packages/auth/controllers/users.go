@@ -8,10 +8,10 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi"
+	"github.com/jacky-htg/go-services/libraries/api"
 	"github.com/jacky-htg/go-services/packages/auth/controllers/request"
 	"github.com/jacky-htg/go-services/packages/auth/controllers/response"
 	"github.com/jacky-htg/go-services/packages/auth/models"
-	"github.com/jacky-htg/go-services/services/api"
 	"golang.org/x/crypto/bcrypt"
 )
 

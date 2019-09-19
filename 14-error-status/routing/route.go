@@ -6,8 +6,8 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi"
+	"github.com/jacky-htg/go-services/libraries/api"
 	"github.com/jacky-htg/go-services/packages/auth/controllers"
-	"github.com/jacky-htg/go-services/services/api"
 )
 
 //API : hanlder api
