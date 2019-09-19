@@ -8,10 +8,10 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/go-chi/chi"
 	"github.com/jacky-htg/go-services/packages/auth/controllers/request"
 	"github.com/jacky-htg/go-services/packages/auth/controllers/response"
 	"github.com/jacky-htg/go-services/packages/auth/models"
+	"github.com/julienschmidt/httprouter"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -22,7 +22,7 @@ type Users struct {
 }
 
 //List : http handler for returning list of users
-func (u *Users) List(w http.ResponseWriter, r *http.Request) {
+func (u *Users) List(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	var user models.User
 	list, err := user.List(u.Db)
 	if err != nil {
@@ -53,8 +53,8 @@ func (u *Users) List(w http.ResponseWriter, r *http.Request) {
 }
 
 //View : http handler for retrieve user by id
-func (u *Users) View(w http.ResponseWriter, r *http.Request) {
-	paramID := chi.URLParam(r, "id")
+func (u *Users) View(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	paramID := ps.ByName("id")
 
 	id, err := strconv.Atoi(paramID)
 	if err != nil {
@@ -88,7 +88,7 @@ func (u *Users) View(w http.ResponseWriter, r *http.Request) {
 }
 
 //Create : http handler for create new user
-func (u *Users) Create(w http.ResponseWriter, r *http.Request) {
+func (u *Users) Create(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	var userRequest request.NewUserRequest
 
 	decoder := json.NewDecoder(r.Body)
@@ -141,8 +141,8 @@ func (u *Users) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 //Update : http handler for update user by id
-func (u *Users) Update(w http.ResponseWriter, r *http.Request) {
-	paramID := chi.URLParam(r, "id")
+func (u *Users) Update(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	paramID := ps.ByName("id")
 
 	id, err := strconv.Atoi(paramID)
 	if err != nil {
@@ -216,8 +216,8 @@ func (u *Users) Update(w http.ResponseWriter, r *http.Request) {
 }
 
 //Delete : http handler for delete user by id
-func (u *Users) Delete(w http.ResponseWriter, r *http.Request) {
-	paramID := chi.URLParam(r, "id")
+func (u *Users) Delete(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	paramID := ps.ByName("id")
 
 	id, err := strconv.Atoi(paramID)
 	if err != nil {
