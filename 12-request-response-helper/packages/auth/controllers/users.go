@@ -204,15 +204,8 @@ func (u *Users) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	isDelete, err := user.Delete(u.Db)
+	err = user.Delete(u.Db)
 	if err != nil {
-		u.Log.Printf("error call delete user: %s", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	if !isDelete {
-		err = errors.New("error delete user")
 		u.Log.Printf("error call delete user: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return

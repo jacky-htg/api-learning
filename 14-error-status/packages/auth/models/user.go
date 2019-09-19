@@ -2,9 +2,7 @@ package models
 
 import (
 	"database/sql"
-	"net/http"
-
-	"github.com/jacky-htg/go-services/libraries/api"
+	"errors"
 )
 
 //User : struct of User
@@ -27,6 +25,8 @@ func (u *User) List(db *sql.DB) ([]User, error) {
 		return list, err
 	}
 
+	defer rows.Close()
+
 	for rows.Next() {
 		var user User
 		err = rows.Scan(getArgs(&user)...)
@@ -42,7 +42,7 @@ func (u *User) List(db *sql.DB) ([]User, error) {
 	}
 
 	if len(list) <= 0 {
-		return list, api.NewRequestError(sql.ErrNoRows, http.StatusNotFound)
+		return list, errors.New("Users not found")
 	}
 
 	return list, nil
@@ -50,11 +50,7 @@ func (u *User) List(db *sql.DB) ([]User, error) {
 
 //Get : get user by id
 func (u *User) Get(db *sql.DB, id int64) error {
-	err := db.QueryRow(qUsers+" WHERE id=?", id).Scan(getArgs(u)...)
-	if err == sql.ErrNoRows {
-		return api.NewRequestError(err, http.StatusNotFound)
-	}
-	return err
+	return db.QueryRow(qUsers+" WHERE id=?", id).Scan(getArgs(u)...)
 }
 
 //Create new user
@@ -67,6 +63,8 @@ func (u *User) Create(db *sql.DB) error {
 	if err != nil {
 		return err
 	}
+
+	defer stmt.Close()
 
 	res, err := stmt.Exec(u.Username, u.Password, u.Email, u.IsActive)
 	if err != nil {
@@ -94,19 +92,28 @@ func (u *User) Update(db *sql.DB) error {
 			updated = NOW()
 		WHERE id = ?
 	`)
+
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
 	_, err = stmt.Exec(u.Username, u.Password, u.IsActive, u.ID)
 	return err
 }
 
 //Delete : delete user
-func (u *User) Delete(db *sql.DB) (bool, error) {
+func (u *User) Delete(db *sql.DB) error {
 	stmt, err := db.Prepare(`DELETE FROM users WHERE id = ?`)
-	_, err = stmt.Exec(u.ID)
 	if err != nil {
-		return false, err
+		return err
 	}
 
-	return true, nil
+	defer stmt.Close()
+
+	_, err = stmt.Exec(u.ID)
+	return err
 }
 
 func getArgs(user *User) []interface{} {

@@ -152,13 +152,9 @@ func (u *Users) Delete(w http.ResponseWriter, r *http.Request) error {
 		return fmt.Errorf("Get user: %v", err)
 	}
 
-	isDelete, err := user.Delete(u.Db)
+	err = user.Delete(u.Db)
 	if err != nil {
 		return fmt.Errorf("Delete user: %v", err)
-	}
-
-	if !isDelete {
-		return errors.New("error delete user")
 	}
 
 	return api.Response(w, nil, http.StatusNoContent)
