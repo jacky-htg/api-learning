@@ -16,6 +16,9 @@ func API(db *sql.DB, log *log.Logger) http.Handler {
 
 	app.Handle(http.MethodGet, "/users", u.List)
 	app.Handle(http.MethodGet, "/users/:id", u.View)
+	app.Handle(http.MethodPost, "/users", u.Create)
+	app.Handle(http.MethodPut, "/users/:id", u.Update)
+	app.Handle(http.MethodDelete, "/users/:id", u.Delete)
 
 	return app
 }
