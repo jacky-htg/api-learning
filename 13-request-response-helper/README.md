@@ -6,7 +6,7 @@ create generic function for decode request and set response
 - Modified packages/auth/controllers/users.go
 
 ## New File :
-- services/api/request.go
-- services/api/response.go
+- libraries/api/request.go
+- libraries/api/response.go
 
 ## Adding Dependency :
