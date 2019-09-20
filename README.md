@@ -2,11 +2,11 @@
 From zero to novice. Step by step create golang framework.
 
 ## Main Architecture and Repository
-- Routing : github.com/go-chi/chi
+- Routing : https://github.com/julienschmidt/httprouter
 - Database : github.com/go-sql-driver/mysql
-- Sql : github.com/jmoiron/sqlx
+- Sql : database/sql
 - Migration : github.com/GuiaBolso/darwin
-- Architecture : simple MVC  
+- Architecture : HMVC  
 
 ## Module
 - 01-startup
@@ -18,11 +18,11 @@ From zero to novice. Step by step create golang framework.
 - 07-fatal
 - 08-logging
 - 09-routing
-- 10-payloads
-- 11-crud
-- 12-request-response-helper
-- 13-error-handler
-- 14-error-status
+- 10-standard-http-handler
+- 11-payloads
+- 12-crud
+- 13-request-response-helper
+- 14-error-handler
 - 15-unit-test
 - 16-api-test
 - 17-context
