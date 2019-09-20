@@ -31,8 +31,3 @@ From zero to novice. Step by step create golang framework.
 - 20-token
 - 21-auhorization-using-rbac
 - 22-health
-- 23-profiling
-- 24-metrics
-- 25-request-logging
-- 26-panics
-- 27-self-shutdown
