@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/jacky-htg/go-services/packages/auth/controllers/request"
-	"github.com/jacky-htg/go-services/packages/auth/controllers/response"
 	"github.com/jacky-htg/go-services/packages/auth/models"
+	"github.com/jacky-htg/go-services/packages/auth/payloads/request"
+	"github.com/jacky-htg/go-services/packages/auth/payloads/response"
 	"github.com/julienschmidt/httprouter"
 	"golang.org/x/crypto/bcrypt"
 )

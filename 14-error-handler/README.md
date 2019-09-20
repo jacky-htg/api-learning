@@ -13,7 +13,7 @@ Task
 ## File Changes :
 - Modified packages/auth/controllers/users.go
 - Modified libraries/api/request.go
-- Modified libraries/response.go
+- Modified libraries/api/response.go
 
 ## New File :
 - libraries/api/error.go
