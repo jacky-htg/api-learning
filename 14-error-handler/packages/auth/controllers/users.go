@@ -27,7 +27,7 @@ func (u *Users) List(w http.ResponseWriter, r *http.Request) {
 	list, err := user.List(u.Db)
 	if err != nil {
 		u.Log.Printf("error call list users: %s", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		api.ResponseError(w, api.ErrInternal(err, ""))
 		return
 	}
 
@@ -38,12 +38,7 @@ func (u *Users) List(w http.ResponseWriter, r *http.Request) {
 		listResponse = append(listResponse, &userResponse)
 	}
 
-	err = api.Response(w, listResponse, http.StatusOK)
-	if err != nil {
-		u.Log.Println("error response", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	api.ResponseOK(w, listResponse, http.StatusOK)
 }
 
 //View : http handler for retrieve user by id
@@ -53,7 +48,7 @@ func (u *Users) View(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(paramID)
 	if err != nil {
 		u.Log.Printf("error type casting paramID: %s", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		api.ResponseError(w, api.ErrInternal(err, ""))
 		return
 	}
 
@@ -61,18 +56,13 @@ func (u *Users) View(w http.ResponseWriter, r *http.Request) {
 	err = user.Get(u.Db, int64(id))
 	if err != nil {
 		u.Log.Printf("error call list user: %s", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		api.ResponseError(w, api.ErrInternal(err, ""))
 		return
 	}
 
 	var response response.UserResponse
 	response.Transform(&user)
-	api.Response(w, response, http.StatusOK)
-	if err != nil {
-		u.Log.Println("error set response", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	api.ResponseOK(w, response, http.StatusOK)
 }
 
 //Create : http handler for create new user
@@ -81,21 +71,21 @@ func (u *Users) Create(w http.ResponseWriter, r *http.Request) {
 	err := api.Decode(r, &userRequest)
 	if err != nil {
 		u.Log.Printf("error decode user: %s", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		api.ResponseError(w, err)
 		return
 	}
 
 	if userRequest.Password != userRequest.RePassword {
 		err = errors.New("Password not match")
 		u.Log.Printf("error : %s", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		api.ResponseError(w, api.ErrBadRequest(err, ""))
 		return
 	}
 
 	pass, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), bcrypt.DefaultCost)
 	if err != nil {
 		u.Log.Printf("error generate password: %s", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		api.ResponseError(w, api.ErrInternal(err, ""))
 		return
 	}
 
@@ -105,18 +95,13 @@ func (u *Users) Create(w http.ResponseWriter, r *http.Request) {
 	err = user.Create(u.Db)
 	if err != nil {
 		u.Log.Printf("error call create user: %s", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		api.ResponseError(w, api.ErrInternal(err, ""))
 		return
 	}
 
 	var response response.UserResponse
 	response.Transform(user)
-	err = api.Response(w, response, http.StatusCreated)
-	if err != nil {
-		u.Log.Println("error set response", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	api.ResponseOK(w, response, http.StatusCreated)
 }
 
 //Update : http handler for update user by id
@@ -126,7 +111,7 @@ func (u *Users) Update(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(paramID)
 	if err != nil {
 		u.Log.Printf("error type casting paramID: %s", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		api.ResponseError(w, api.ErrInternal(err, ""))
 		return
 	}
 
@@ -134,7 +119,7 @@ func (u *Users) Update(w http.ResponseWriter, r *http.Request) {
 	err = user.Get(u.Db, int64(id))
 	if err != nil {
 		u.Log.Printf("error call list user: %s", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		api.ResponseError(w, api.ErrInternal(err, ""))
 		return
 	}
 
@@ -142,14 +127,14 @@ func (u *Users) Update(w http.ResponseWriter, r *http.Request) {
 	err = api.Decode(r, &userRequest)
 	if err != nil {
 		u.Log.Printf("error decode user: %s", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		api.ResponseError(w, err)
 		return
 	}
 
 	if len(userRequest.Password) > 0 && userRequest.Password != userRequest.RePassword {
 		err = errors.New("Password not match")
 		u.Log.Printf("error : %s", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		api.ResponseError(w, api.ErrBadRequest(err, ""))
 		return
 	}
 
@@ -157,7 +142,7 @@ func (u *Users) Update(w http.ResponseWriter, r *http.Request) {
 		pass, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), bcrypt.DefaultCost)
 		if err != nil {
 			u.Log.Printf("error generate password: %s", err)
-			w.WriteHeader(http.StatusInternalServerError)
+			api.ResponseError(w, api.ErrInternal(err, ""))
 			return
 		}
 
@@ -171,18 +156,13 @@ func (u *Users) Update(w http.ResponseWriter, r *http.Request) {
 	err = userUpdate.Update(u.Db)
 	if err != nil {
 		u.Log.Printf("error call update user: %s", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		api.ResponseError(w, api.ErrInternal(err, ""))
 		return
 	}
 
 	var response response.UserResponse
 	response.Transform(userUpdate)
-	err = api.Response(w, response, http.StatusOK)
-	if err != nil {
-		u.Log.Println("error set response", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	api.ResponseOK(w, response, http.StatusOK)
 }
 
 //Delete : http handler for delete user by id
@@ -192,7 +172,7 @@ func (u *Users) Delete(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(paramID)
 	if err != nil {
 		u.Log.Printf("error type casting paramID: %s", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		api.ResponseError(w, api.ErrInternal(err, ""))
 		return
 	}
 
@@ -200,16 +180,16 @@ func (u *Users) Delete(w http.ResponseWriter, r *http.Request) {
 	err = user.Get(u.Db, int64(id))
 	if err != nil {
 		u.Log.Printf("error call list user: %s", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		api.ResponseError(w, api.ErrInternal(err, ""))
 		return
 	}
 
 	err = user.Delete(u.Db)
 	if err != nil {
 		u.Log.Printf("error call delete user: %s", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		api.ResponseError(w, api.ErrInternal(err, ""))
 		return
 	}
 
-	w.WriteHeader(http.StatusNoContent)
+	api.ResponseOK(w, nil, http.StatusNoContent)
 }
