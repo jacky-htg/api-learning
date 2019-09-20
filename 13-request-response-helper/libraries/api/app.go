@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"log"
 	"net/http"
 
@@ -14,9 +15,17 @@ type App struct {
 	mux *httprouter.Router
 }
 
+type Handler func(http.ResponseWriter, *http.Request)
+
 // Handle associates a httprouter Handle function with an HTTP Method and URL pattern.
-func (a *App) Handle(method, url string, h httprouter.Handle) {
-	a.mux.Handle(method, url, h)
+func (a *App) Handle(method, url string, h Handler) {
+
+	fn := func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		ctx := context.WithValue(r.Context(), "ps", ps)
+		h(w, r.WithContext(ctx))
+	}
+
+	a.mux.Handle(method, url, fn)
 }
 
 // ServeHTTP implements the http.Handler interface.
