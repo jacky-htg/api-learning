@@ -2,7 +2,7 @@
 From zero to novice. Step by step create golang framework.
 
 ## Main Architecture and Repository
-- Routing : https://github.com/julienschmidt/httprouter
+- Routing : github.com/julienschmidt/httprouter
 - Database : github.com/go-sql-driver/mysql
 - Sql : database/sql
 - Migration : github.com/GuiaBolso/darwin
