@@ -1,6 +1,9 @@
 package schema
 
-import "database/sql"
+import (
+	"database/sql"
+	"fmt"
+)
 
 // seeds is a string constant containing all of the queries needed to get the
 // db seeded to a useful state for development.
@@ -15,24 +18,50 @@ import "database/sql"
 // multiple queries as part of the same execution so this single large constant
 // may need to be broken up.
 
-const seeds = `
-INSERT INTO users (username, password, email, is_active) VALUES
-	('jackyhtg', '$2y$10$ekouPwVdtMEy5AFbogzfSeRloxHzUwEAsM7SyNJXnso/F9ds/XUYy', 'admin@admin.com', 1)
+const seedUsers string = `
+INSERT INTO users (id, username, password, email, is_active) VALUES
+	(1, 'jackyhtg', '$2y$10$ekouPwVdtMEy5AFbogzfSeRloxHzUwEAsM7SyNJXnso/F9ds/XUYy', 'admin@admin.com', 1);
+`
+
+const seedAccess string = `
+INSERT INTO access (id, name, alias, created) VALUES (1, 'root', 'root', NOW());
+`
+
+const seedRoles string = `
+INSERT INTO roles (id, name, created) VALUES (1, 'superadmin', NOW());
+`
+
+const seedAccessRoles string = `
+INSERT INTO access_roles (access_id, role_id) VALUES (1, 1);
+`
+
+const seedRolesUsers string = `
+INSERT INTO roles_users (role_id, user_id) VALUES (1, 1);
 `
 
 // Seed runs the set of seed-data queries against db. The queries are ran in a
 // transaction and rolled back if any fail.
 func Seed(db *sql.DB) error {
+	seeds := []string{
+		seedUsers,
+		seedAccess,
+		seedRoles,
+		seedAccessRoles,
+		seedRolesUsers,
+	}
+
 	tx, err := db.Begin()
 	if err != nil {
 		return err
 	}
 
-	if _, err := tx.Exec(seeds); err != nil {
-		if err := tx.Rollback(); err != nil {
+	for _, seed := range seeds {
+		_, err = tx.Exec(seed)
+		if err != nil {
+			tx.Rollback()
+			fmt.Println("error execute seed")
 			return err
 		}
-		return err
 	}
 
 	return tx.Commit()
