@@ -39,6 +39,8 @@ Task
 - packages/auth/controllers/tests/authstest.go
 - packages/auth/controllers/tests/rolestest.go
 - packages/auth/controllers/tests/accesstest.go
+- libraries/array/string.go
+- libraries/array/uint32.go
 
 ## Adding Dependency :
 

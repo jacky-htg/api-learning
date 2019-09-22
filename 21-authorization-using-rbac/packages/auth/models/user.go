@@ -30,7 +30,7 @@ func (u *User) List(ctx context.Context, db *sql.DB) ([]User, error) {
 
 	for rows.Next() {
 		var user User
-		err = rows.Scan(getArgs(&user)...)
+		err = rows.Scan(user.getArgs()...)
 		if err != nil {
 			return list, err
 		}
@@ -51,12 +51,12 @@ func (u *User) List(ctx context.Context, db *sql.DB) ([]User, error) {
 
 //Get : get user by id
 func (u *User) Get(ctx context.Context, db *sql.DB) error {
-	return db.QueryRowContext(ctx, qUsers+" WHERE id=?", u.ID).Scan(getArgs(u)...)
+	return db.QueryRowContext(ctx, qUsers+" WHERE id=?", u.ID).Scan(u.getArgs()...)
 }
 
 //GetByUsername : get user by username
 func (u *User) GetByUsername(ctx context.Context, db *sql.DB) error {
-	return db.QueryRowContext(ctx, qUsers+" WHERE username=?", u.Username).Scan(getArgs(u)...)
+	return db.QueryRowContext(ctx, qUsers+" WHERE username=?", u.Username).Scan(u.getArgs()...)
 }
 
 //Create new user
@@ -122,12 +122,12 @@ func (u *User) Delete(ctx context.Context, db *sql.DB) error {
 	return err
 }
 
-func getArgs(user *User) []interface{} {
+func (u *User) getArgs() []interface{} {
 	var args []interface{}
-	args = append(args, &user.ID)
-	args = append(args, &user.Username)
-	args = append(args, &user.Password)
-	args = append(args, &user.Email)
-	args = append(args, &user.IsActive)
+	args = append(args, &u.ID)
+	args = append(args, &u.Username)
+	args = append(args, &u.Password)
+	args = append(args, &u.Email)
+	args = append(args, &u.IsActive)
 	return args
 }
