@@ -23,8 +23,8 @@ const qUsers = `
 SELECT users.id, users.username, users.password, users.email, users.is_active, 
 	JSON_ARRAYAGG(roles.id) as roles_id, JSON_ARRAYAGG(roles.name) as roles_name
 FROM users
-JOIN roles_users ON users.id=roles_users.user_id
-JOIN roles ON roles_users.role_id=roles.id
+LEFT JOIN roles_users ON users.id=roles_users.user_id
+LEFT JOIN roles ON roles_users.role_id=roles.id
 `
 
 //List : List of users
@@ -88,7 +88,7 @@ func (u *User) List(ctx context.Context, db *sql.DB) ([]User, error) {
 //Get : get user by id
 func (u *User) Get(ctx context.Context, db *sql.DB) error {
 	var roleIDs, roleNames string
-	err := db.QueryRowContext(ctx, qUsers+" WHERE id=? GROUP BY users.id", u.ID).Scan(
+	err := db.QueryRowContext(ctx, qUsers+" WHERE users.id=? GROUP BY users.id", u.ID).Scan(
 		&u.ID,
 		&u.Username,
 		&u.Password,
@@ -124,7 +124,7 @@ func (u *User) Get(ctx context.Context, db *sql.DB) error {
 //GetByUsername : get user by username
 func (u *User) GetByUsername(ctx context.Context, db *sql.DB) error {
 	var roleIDs, roleNames string
-	err := db.QueryRowContext(ctx, qUsers+" WHERE username=? GROUP BY users.id", u.Username).Scan(
+	err := db.QueryRowContext(ctx, qUsers+" WHERE users.username=? GROUP BY users.id", u.Username).Scan(
 		&u.ID,
 		&u.Username,
 		&u.Password,
@@ -223,15 +223,17 @@ func (u *User) Update(ctx context.Context, tx *sql.Tx) error {
 	}
 
 	for _, r := range u.Roles {
-		var array array.ArrUint32
-		isExist, index := array.InArray(r.ID, existingRoles)
-		if !isExist {
-			err = u.AddRole(ctx, tx, r)
-			if err != nil {
-				return err
+		if r.ID > 0 {
+			var array array.ArrUint32
+			isExist, index := array.InArray(r.ID, existingRoles)
+			if !isExist {
+				err = u.AddRole(ctx, tx, r)
+				if err != nil {
+					return err
+				}
+			} else {
+				existingRoles = array.RemoveByIndex(existingRoles, index)
 			}
-		} else {
-			existingRoles = array.RemoveByIndex(existingRoles, index)
 		}
 	}
 

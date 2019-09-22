@@ -39,7 +39,7 @@ func TestMain(t *testing.T) {
 
 	// api test for users
 	{
-		users := apiTest.Users{App: routing.API(db, log)}
+		users := apiTest.Users{App: routing.API(db, log), Token: token}
 		t.Run("APiUsersList", users.List)
 		t.Run("APiUsersCrud", users.Crud)
 	}

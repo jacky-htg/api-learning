@@ -107,6 +107,8 @@ func (u *Users) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tx.Commit()
+
 	var response response.UserResponse
 	response.Transform(user)
 	api.ResponseOK(w, response, http.StatusCreated)
@@ -175,6 +177,8 @@ func (u *Users) Update(w http.ResponseWriter, r *http.Request) {
 		api.ResponseError(w, err)
 		return
 	}
+
+	tx.Commit()
 
 	var response response.UserResponse
 	response.Transform(userUpdate)
