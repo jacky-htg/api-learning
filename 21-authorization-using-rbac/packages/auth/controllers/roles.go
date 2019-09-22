@@ -285,5 +285,5 @@ func (u *Roles) Revoke(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	api.ResponseOK(w, nil, http.StatusOK)
+	api.ResponseOK(w, nil, http.StatusNoContent)
 }

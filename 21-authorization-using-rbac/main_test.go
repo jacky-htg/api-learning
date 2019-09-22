@@ -43,4 +43,17 @@ func TestMain(t *testing.T) {
 		t.Run("APiUsersList", users.List)
 		t.Run("APiUsersCrud", users.Crud)
 	}
+
+	// api test for access
+	{
+		access := apiTest.Access{App: routing.API(db, log), Token: token}
+		t.Run("APiAccessList", access.List)
+	}
+
+	// api test for roles
+	{
+		roles := apiTest.Roles{App: routing.API(db, log), Token: token}
+		t.Run("APiRolesList", roles.List)
+		t.Run("APiRolesCrud", roles.Crud)
+	}
 }
