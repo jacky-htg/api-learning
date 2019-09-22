@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 
+	"github.com/jacky-htg/go-services/libraries/api"
 	"github.com/jacky-htg/go-services/libraries/token"
 )
 
@@ -140,12 +141,12 @@ func (u *Access) IsAuth(ctx context.Context, db *sql.DB, tokenparam interface{},
 	var err error
 
 	if tokenparam == nil {
-		return isAuth, errors.New("Bad request for token")
+		return isAuth, api.ErrBadRequest(errors.New("Bad request for token"), "")
 	}
 
 	isValid, username := token.ValidateToken(tokenparam.(string))
 	if !isValid {
-		return isAuth, errors.New("Bad request for invalid token")
+		return isAuth, api.ErrBadRequest(errors.New("Bad request for invalid token"), "")
 	}
 
 	user := User{Username: username}

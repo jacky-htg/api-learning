@@ -25,3 +25,7 @@ func (s ArrUint32) Remove(array []uint32, value uint32) []uint32 {
 
 	return array
 }
+
+func (s ArrUint32) RemoveByIndex(array []uint32, index int) []uint32 {
+	return append(array[:index], array[(index+1):]...)
+}

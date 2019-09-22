@@ -27,7 +27,7 @@ func (u *Users) List(w http.ResponseWriter, r *http.Request) {
 	list, err := user.List(r.Context(), u.Db)
 	if err != nil {
 		u.Log.Printf("error call list users: %s", err)
-		api.ResponseError(w, api.ErrInternal(err, ""))
+		api.ResponseError(w, err)
 		return
 	}
 
@@ -49,7 +49,7 @@ func (u *Users) View(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(paramID)
 	if err != nil {
 		u.Log.Printf("error type casting paramID: %s", err)
-		api.ResponseError(w, api.ErrInternal(err, ""))
+		api.ResponseError(w, err)
 		return
 	}
 
@@ -57,7 +57,7 @@ func (u *Users) View(w http.ResponseWriter, r *http.Request) {
 	err = user.Get(ctx, u.Db)
 	if err != nil {
 		u.Log.Printf("error call list user: %s", err)
-		api.ResponseError(w, api.ErrInternal(err, ""))
+		api.ResponseError(w, err)
 		return
 	}
 
@@ -86,17 +86,24 @@ func (u *Users) Create(w http.ResponseWriter, r *http.Request) {
 	pass, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), bcrypt.DefaultCost)
 	if err != nil {
 		u.Log.Printf("error generate password: %s", err)
-		api.ResponseError(w, api.ErrInternal(err, ""))
+		api.ResponseError(w, err)
 		return
 	}
 
 	userRequest.Password = string(pass)
 
 	user := userRequest.Transform()
-	err = user.Create(r.Context(), u.Db)
+	tx, err := u.Db.Begin()
+	if err != nil {
+		u.Log.Printf("begin tx: %s", err)
+		api.ResponseError(w, err)
+		return
+	}
+
+	err = user.Create(r.Context(), tx)
 	if err != nil {
 		u.Log.Printf("error call create user: %s", err)
-		api.ResponseError(w, api.ErrInternal(err, ""))
+		api.ResponseError(w, err)
 		return
 	}
 
@@ -113,7 +120,7 @@ func (u *Users) Update(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(paramID)
 	if err != nil {
 		u.Log.Printf("error type casting paramID: %s", err)
-		api.ResponseError(w, api.ErrInternal(err, ""))
+		api.ResponseError(w, err)
 		return
 	}
 
@@ -121,7 +128,7 @@ func (u *Users) Update(w http.ResponseWriter, r *http.Request) {
 	err = user.Get(ctx, u.Db)
 	if err != nil {
 		u.Log.Printf("error call list user: %s", err)
-		api.ResponseError(w, api.ErrInternal(err, ""))
+		api.ResponseError(w, err)
 		return
 	}
 
@@ -144,7 +151,7 @@ func (u *Users) Update(w http.ResponseWriter, r *http.Request) {
 		pass, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), bcrypt.DefaultCost)
 		if err != nil {
 			u.Log.Printf("error generate password: %s", err)
-			api.ResponseError(w, api.ErrInternal(err, ""))
+			api.ResponseError(w, err)
 			return
 		}
 
@@ -155,10 +162,17 @@ func (u *Users) Update(w http.ResponseWriter, r *http.Request) {
 		userRequest.ID = user.ID
 	}
 	userUpdate := userRequest.Transform(&user)
-	err = userUpdate.Update(ctx, u.Db)
+	tx, err := u.Db.Begin()
+	if err != nil {
+		u.Log.Printf("begin tx: %s", err)
+		api.ResponseError(w, err)
+		return
+	}
+
+	err = userUpdate.Update(ctx, tx)
 	if err != nil {
 		u.Log.Printf("error call update user: %s", err)
-		api.ResponseError(w, api.ErrInternal(err, ""))
+		api.ResponseError(w, err)
 		return
 	}
 
@@ -175,7 +189,7 @@ func (u *Users) Delete(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(paramID)
 	if err != nil {
 		u.Log.Printf("error type casting paramID: %s", err)
-		api.ResponseError(w, api.ErrInternal(err, ""))
+		api.ResponseError(w, err)
 		return
 	}
 
@@ -183,14 +197,14 @@ func (u *Users) Delete(w http.ResponseWriter, r *http.Request) {
 	err = user.Get(ctx, u.Db)
 	if err != nil {
 		u.Log.Printf("error call list user: %s", err)
-		api.ResponseError(w, api.ErrInternal(err, ""))
+		api.ResponseError(w, err)
 		return
 	}
 
 	err = user.Delete(ctx, u.Db)
 	if err != nil {
 		u.Log.Printf("error call delete user: %s", err)
-		api.ResponseError(w, api.ErrInternal(err, ""))
+		api.ResponseError(w, err)
 		return
 	}
 

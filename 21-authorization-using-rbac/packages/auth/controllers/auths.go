@@ -32,8 +32,9 @@ func (u *Auths) Login(w http.ResponseWriter, r *http.Request) {
 	uLogin := models.User{Username: loginRequest.Username}
 	err = uLogin.GetByUsername(r.Context(), u.Db)
 	if err != nil {
+		err = fmt.Errorf("call login: %v", err)
 		u.Log.Printf("ERROR : %+v", err)
-		api.ResponseError(w, api.ErrInternal(fmt.Errorf("call login: %v", err), ""))
+		api.ResponseError(w, err)
 		return
 	}
 

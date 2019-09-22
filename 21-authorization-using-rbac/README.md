@@ -12,7 +12,7 @@ Task
 - go run cmd/main.go scan-access to insert routing into access table
 - create roles service
 - update users service to support roles/multi-roles
-- create middleware to handle authorization checking
+- update auth middleware to handle authorization checking
 - update api testing to support all feature in this chapter
 - create api testing for new services (roles & access)
 
@@ -25,6 +25,8 @@ Task
 - cmd/main.go
 - main_test.go
 - packages/auth/controllers/tests/userstest.go
+- libraries/api/app.go
+- middleware/auth.go
 
 ## New File :
 - libraries/auth/access.go
@@ -35,7 +37,6 @@ Task
 - packages/auth/models/roles.go
 - packages/auth/payloads/request/roles_request.go
 - packages/auth/payloads/response/roles_response.go
-- middleware/auth.go
 - packages/auth/controllers/tests/authstest.go
 - packages/auth/controllers/tests/rolestest.go
 - packages/auth/controllers/tests/accesstest.go

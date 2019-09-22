@@ -25,6 +25,7 @@ func (a *App) Handle(method, url string, h Handler) {
 
 	fn := func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		ctx := context.WithValue(r.Context(), "ps", ps)
+		ctx = context.WithValue(ctx, "url", url)
 		h(w, r.WithContext(ctx))
 	}
 
