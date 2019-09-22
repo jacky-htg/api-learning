@@ -18,7 +18,7 @@ const qRoles = `SELECT id, name FROM roles`
 func (u *Role) List(ctx context.Context, db *sql.DB) ([]Role, error) {
 	list := []Role{}
 
-	rows, err := db.QueryContext(ctx, qAccess)
+	rows, err := db.QueryContext(ctx, qRoles)
 	if err != nil {
 		return list, err
 	}
