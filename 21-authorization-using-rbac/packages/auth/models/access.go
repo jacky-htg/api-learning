@@ -91,18 +91,14 @@ func (u *Access) Create(ctx context.Context, tx *sql.Tx) error {
 }
 
 //Delete : delete user
-func (u *Access) Delete(ctx context.Context, tx *sql.Tx) (bool, error) {
+func (u *Access) Delete(ctx context.Context, tx *sql.Tx) error {
 	stmt, err := tx.PrepareContext(ctx, `DELETE FROM access WHERE id = ?`)
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	_, err = stmt.ExecContext(ctx, u.ID)
-	if err != nil {
-		return false, err
-	}
-
-	return true, nil
+	return err
 }
 
 // GetIDs : get array of access id

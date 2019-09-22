@@ -3,7 +3,6 @@ package auth
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"strings"
@@ -130,7 +129,6 @@ func removeAccess(tx *sql.Tx, existingAccess []uint32) error {
 	ctx := context.Background()
 
 	for _, i := range existingAccess {
-		var isSuccess bool
 		u := models.Access{ID: i}
 		err = u.Get(ctx, tx)
 		if err != nil {
@@ -139,13 +137,9 @@ func removeAccess(tx *sql.Tx, existingAccess []uint32) error {
 
 		name := u.Name
 
-		isSuccess, err = u.Delete(ctx, tx)
+		err = u.Delete(ctx, tx)
 		if err != nil {
 			return err
-		}
-
-		if !isSuccess {
-			return errors.New("Deleted failed")
 		}
 
 		fmt.Println("Deleted " + name)
